@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: webpj-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Root@111111
+      MYSQL_DATABASE: webapp
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./turing_machine.sql:/docker-entrypoint-initdb.d/01-turing_machine.sql
+      - ./user.sql:/docker-entrypoint-initdb.d/02-user.sql
+    networks:
+      - webpj-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pRoot@111111"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    #image: webpj-backend:2.0.1
+    container_name: webpj-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/webapp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Root@111111
+    networks:
+      - webpj-network
+    restart: always
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    #image: webpj-frontend:2.0.1
+    container_name: webpj-frontend
+    ports:
+      - "80:80"
+    networks:
+      - webpj-network
+    depends_on:
+      - backend
+    restart: always
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+networks:
+  webpj-network:
+    driver: bridge
+
+volumes:
+  mysql-data: 

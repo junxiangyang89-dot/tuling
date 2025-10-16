@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: webpj-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: Root@111111
+      MYSQL_DATABASE: webapp
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./turing_machine.sql:/docker-entrypoint-initdb.d/01-turing_machine.sql
+      - ./user.sql:/docker-entrypoint-initdb.d/02-user.sql
+    networks:
+      - webpj-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pRoot@111111"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:  # 启用本地构建
+      context: .  # 构建上下文路径（项目根目录）
+      dockerfile: Dockerfile.backend  # 后端Dockerfile路径（根据实际文件名修改
+    #image: webpj-backend
+    container_name: webpj-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev  # 开发环境配置
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/webapp?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=Root@111111
+    networks:
+      - webpj-network
+    restart: always
+
+  frontend:
+    build:  # 启用本地构建
+      context: .  # 构建上下文路径（项目根目录）
+      dockerfile: Dockerfile.frontend  # 前端Dockerfile路径（根据实际文件名修改）
+    #image: webpj-frontend
+    container_name: webpj-frontend
+    ports:
+      - "80:80"
+      - "4200:80"  # 额外的端口映射，方便本地开发
+    networks:
+      - webpj-network
+    depends_on:
+      - backend
+    restart: always
+
+networks:
+  webpj-network:
+    driver: bridge
+
+volumes:
+  mysql-data: 

@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  mysql-dev:
+    image: mysql:8.0
+    container_name: webpj-mysql-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: Root@111111
+      MYSQL_DATABASE: webapp
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-dev-data:/var/lib/mysql
+      - ./turing_machine.sql:/docker-entrypoint-initdb.d/01-turing_machine.sql
+      - ./user.sql:/docker-entrypoint-initdb.d/02-user.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pRoot@111111"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mysql-dev-data: 

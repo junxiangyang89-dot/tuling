@@ -1,0 +1,47 @@
+# 第一阶段：构建阶段
+FROM eclipse-temurin:17-jdk-alpine AS builder
+
+WORKDIR /app
+
+# 安装必要工具
+RUN apk add --no-cache curl
+
+# 复制 Maven 配置文件到容器
+COPY settings.xml /root/.m2/settings.xml
+
+# 复制 Maven 构建文件和 wrapper
+COPY pom.xml .
+COPY mvnw .
+COPY .mvn ./.mvn
+
+# 给mvnw执行权限
+RUN chmod +x ./mvnw
+
+# 预下载依赖，使用阿里云镜像加速，设置超时时间
+RUN ./mvnw dependency:go-offline -s /root/.m2/settings.xml \
+    -Dmaven.wagon.http.connectionTimeout=30000 \
+    -Dmaven.wagon.http.readTimeout=30000 \
+    -Dmaven.wagon.rto=30000 \
+    --batch-mode --no-transfer-progress || echo "依赖下载警告，继续构建..."
+
+# 复制源码
+COPY src ./src
+
+# 构建应用，跳过测试，使用配置文件
+RUN ./mvnw clean package -DskipTests \
+    -s /root/.m2/settings.xml \
+    --batch-mode --no-transfer-progress
+
+# 第二阶段：运行阶段
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+# 只复制最终构建产物
+COPY --from=builder /app/target/WebPJ-0.0.1-SNAPSHOT.jar app.jar
+
+EXPOSE 8080
+
+ENV SPRING_PROFILES_ACTIVE=prod
+
+ENTRYPOINT ["java", "-jar", "app.jar"] 
