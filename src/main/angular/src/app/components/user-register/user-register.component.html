@@ -1,0 +1,138 @@
+<!--<p>-->
+<!--  <button (click)="register()">User Register</button>-->
+<!--</p>-->
+<div class="login-container">
+  <!-- 标题 -->
+  <div class="app-title">
+    <h1>图灵机模拟器</h1>
+    <p>探索计算理论的奇妙世界</p>
+  </div>
+  
+  <!-- 已登录用户面板 -->
+  <div class="user-panel" *ngIf="isLoggedIn">
+    <h2>您已登录</h2>
+    <p>当前可以直接进入应用，或者选择退出</p>
+    <div class="button-group">
+      <button class="primary-button" (click)="navigateToWelcome()">进入应用</button>
+      <button class="back-button" (click)="backToLogin()">返回登录界面</button>
+      <button class="secondary-button" (click)="logout()">退出登录</button>
+    </div>
+  </div>
+  
+  <!-- 表单区域 - 横向布局 -->
+  <div class="forms-container">
+    <!-- 登录表单 - 始终显示 -->
+    <div class="login-form-container">
+      <div class="form-container">
+        <h2>用户登录</h2>
+        <form (ngSubmit)="login()">
+          <div class="form-field">
+            <label for="username">用户名</label>
+            <input id="username" [(ngModel)]="login_data.username" name="username" placeholder="请输入用户名" required />
+          </div>
+          <div class="form-field">
+            <label for="password">密码</label>
+            <input id="password" [(ngModel)]="login_data.password" name="password" type="password" placeholder="请输入密码" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary-button">登录</button>
+          </div>
+        </form>
+        
+        <div class="form-toggle">
+          <p><a (click)="toggleLoginMode()" class="toggle-link">{{ !isRegisterMode ? '没有账号？点击注册' : '关闭注册' }}</a></p>
+          <p><a (click)="toggleResetMode()" class="toggle-link">{{ !isResetMode ? '忘记密码？点击重置' : '取消重置' }}</a></p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 注册表单 -->
+    <div class="register-form-container" *ngIf="!isLoginMode && isRegisterMode">
+      <div class="form-container">
+        <h2>用户注册</h2>
+        <form (ngSubmit)="register()">
+          <div class="form-field">
+            <label for="reg-username">用户名</label>
+            <input id="reg-username" [(ngModel)]="register_data.username" name="username" placeholder="请输入用户名" required />
+          </div>
+          <div class="form-field">
+            <label for="reg-password">密码</label>
+            <input id="reg-password" [(ngModel)]="register_data.password" name="password" type="password" placeholder="请输入密码" required />
+          </div>
+          <div class="form-field">
+            <label for="email">邮箱</label>
+            <input id="email" [(ngModel)]="register_data.email" name="email" type="email" placeholder="请输入邮箱" required />
+          </div>
+          <div class="form-field">
+            <label for="phone">电话</label>
+            <input id="phone" [(ngModel)]="register_data.phone" name="phone" placeholder="请输入电话" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary-button">注册</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 重置表单 -->
+    <div class="reset-form-container" *ngIf="!isLoginMode && isResetMode">
+      <div class="form-container">
+        <h2>重置密码</h2>
+        <form (ngSubmit)="resetPassword()">
+          <div class="form-field">
+            <label for="reset-username">用户名</label>
+            <input
+              id="reset-username"
+              [(ngModel)]="reset_data.username"
+              name="username"
+              placeholder="请输入用户名"
+              required />
+          </div>
+          <div class="form-field">
+            <label for="reset-newpwd">新密码</label>
+            <input
+              id="reset-newpwd"
+              type="password"
+              [(ngModel)]="reset_data.newPassword"
+              name="newPassword"
+              placeholder="请输入新密码"
+              required />
+          </div>
+          <div class="form-field">
+            <label for="reset-confirm">确认新密码</label>
+            <input
+              id="reset-confirm"
+              type="password"
+              [(ngModel)]="reset_data.confirmPassword"
+              name="confirmPassword"
+              placeholder="再次输入新密码"
+              required />
+          </div>
+
+          <!-- 校验错误提示 -->
+          <div *ngIf="resetError" class="error">{{ resetError }}</div>
+
+          <div class="form-actions">
+            <button type="submit" class="primary-button">重置密码</button>
+            <button type="button" class="back-button" (click)="toggleResetMode()">取消</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  
+
+  
+  <!-- 已登录用户列表 -->
+  <div class="user-list-container" *ngIf="getLoggedUsers().length > 0">
+    <h3>已登录用户</h3>
+    <p>可以直接切换到以下用户，无需重新输入密码</p>
+    <div class="user-list">
+      <div class="user-card" *ngFor="let user of getLoggedUsers()">
+        <div class="user-name">{{ user }}</div>
+        <button class="switch-button" (click)="switchUser(user)">切换用户</button>
+      </div>
+    </div>
+  </div>
+</div>

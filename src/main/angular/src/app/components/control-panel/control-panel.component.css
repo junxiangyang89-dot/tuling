@@ -1,0 +1,27 @@
+.controls {
+    display: flex;
+    /*flex-direction: column;*/
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+  
+.controls button {
+    padding: 8px 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+  
+.controls button:hover {
+    background-color: #45a049;
+}
+
+.controls input {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
+  }

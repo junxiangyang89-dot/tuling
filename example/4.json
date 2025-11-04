@@ -1,0 +1,49 @@
+{
+  "name": "Even or Odd Check",
+  "description": "通过检查最后一位数字来判断二进制数是偶数还是奇数。",
+  "configuration": {
+    "initialState": "q0",
+    "acceptingStates": [
+      "qEven",
+      "qOdd"
+    ],
+    "tape": "1011",
+    "rules": [
+      {
+        "currentState": "q0",
+        "readSymbol": "0",
+        "nextState": "q0",
+        "writeSymbol": "0",
+        "move": "R"
+      },
+      {
+        "currentState": "q0",
+        "readSymbol": "1",
+        "nextState": "q0",
+        "writeSymbol": "1",
+        "move": "R"
+      },
+      {
+        "currentState": "q0",
+        "readSymbol": " ",
+        "nextState": "q1",
+        "writeSymbol": " ",
+        "move": "L"
+      },
+      {
+        "currentState": "q1",
+        "readSymbol": "0",
+        "nextState": "qEven",
+        "writeSymbol": "0",
+        "move": "S"
+      },
+      {
+        "currentState": "q1",
+        "readSymbol": "1",
+        "nextState": "qOdd",
+        "writeSymbol": "1",
+        "move": "S"
+      }
+    ]
+  }
+}

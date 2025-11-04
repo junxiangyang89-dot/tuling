@@ -1,0 +1,25 @@
+<div class="state-editor-container">
+  <div #editorContainer class="editor-container"></div>
+
+  <div class="editor-controls">
+    <button (click)="toggleHelp()" class="help-button">
+      <i class="material-icons">help_outline</i> 使用说明
+    </button>
+
+    <div *ngIf="currentMode !== 'learning-mode'" class="zoom-controls">
+      <button (click)="onAddTransitionClick()">添加状态连接</button>
+      <button (click)="resetZoom()" title="重置视图">
+        <i class="material-icons">refresh</i>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="showHelp" class="help-panel">
+    <h3>状态图编辑器使用指南</h3>
+    <ul>
+      <li>在<strong>非学习模式</strong>中使用: </li>
+      <li><strong>添加状态</strong>: 点击空白处</li>
+      <li><strong>创建转移</strong>: 点击添加状态按钮，根据指引实现 </li>
+    </ul>
+  </div>
+</div>

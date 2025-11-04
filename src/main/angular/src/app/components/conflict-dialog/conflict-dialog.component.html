@@ -1,0 +1,26 @@
+<div class="conflict-dialog">
+    <h3>规则冲突</h3>
+    <p class="conflict-title">发现与现有规则冲突：</p>
+
+    <div class="conflict-content">
+      <div class="conflict-section">
+        <p><strong>当前规则：</strong></p>
+        <p>状态: {{ existingRule?.currentState }} → {{ existingRule?.nextState }}</p>
+        <p>读符号: {{ existingRule?.inputSymbol }}</p>
+        <p>写符号: {{ existingRule?.outputSymbol }}</p>
+        <p>方向: {{ existingRule?.moveDirection }}</p>
+      </div>
+      <div class="conflict-section">
+        <p><strong>新规则：</strong></p>
+        <p>状态: {{ newRule?.currentState }} → {{ newRule?.nextState }}</p>
+        <p>读符号: {{ newRule?.inputSymbol }}</p>
+        <p>写符号: {{ newRule?.outputSymbol }}</p>
+        <p>方向: {{ newRule?.moveDirection }}</p>
+      </div>
+    </div>
+
+    <div class="conflict-actions">
+      <button type="button" (click)="onCancel()">取消</button>
+      <button type="button" (click)="onConfirm()">覆盖</button>
+    </div>
+  </div>

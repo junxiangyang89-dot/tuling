@@ -1,0 +1,134 @@
+.welcome-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 30px;
+    font-family: 'Arial', sans-serif;
+}
+
+.welcome-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 50px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.welcome-header h1 {
+    font-size: 2.5rem;
+    color: #333;
+    margin: 0;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.username {
+    font-size: 1.1rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.logout-btn {
+    padding: 8px 15px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+.mode-selection {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+}
+
+.mode-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    text-align: center;
+}
+
+.mode-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.mode-card h2 {
+    font-size: 1.8rem;
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.mode-card p {
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.5;
+}
+
+.mode-card button {
+    padding: 10px 25px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.mode-card button:hover {
+    background-color: #2980b9;
+}
+
+/* 模式特定颜色 */
+.mode-card:nth-child(1) h2 {
+    color: #3498db;
+}
+
+.mode-card:nth-child(2) h2 {
+    color: #27ae60;
+}
+
+.mode-card:nth-child(3) h2 {
+    color: #e67e22;
+}
+
+.mode-card:nth-child(1) button {
+    background-color: #3498db;
+}
+
+.mode-card:nth-child(2) button {
+    background-color: #27ae60;
+}
+
+.mode-card:nth-child(3) button {
+    background-color: #e67e22;
+}
+
+.mode-card:nth-child(1) button:hover {
+    background-color: #2980b9;
+}
+
+.mode-card:nth-child(2) button:hover {
+    background-color: #219653;
+}
+
+.mode-card:nth-child(3) button:hover {
+    background-color: #d35400;
+}

@@ -1,0 +1,101 @@
+<div class="add-rule-panel">
+  <div class="panel-header">
+    <h3>添加自定义规则</h3>
+  </div>
+
+  <div class="form-container">
+    <div class="columns-layout">
+      <!-- 左侧列 -->
+      <div class="column left-column">
+        <div class="form-group">
+          <label for="currentState">当前状态</label>
+          <select id="currentState" [(ngModel)]="newRule.currentState">
+            <option value="">请选择...</option>
+            <option *ngFor="let s of availableStates" [value]="s">{{ s }}</option>
+            <option value="other">其他...</option>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="newRule.currentState === 'other'">
+          <label for="customState_c">自定义状态</label>
+          <input
+            id="customState_c"
+            type="text"
+            [(ngModel)]="newRule.customState_c"
+            name="customState_c"
+            placeholder="请输入自定义状态名称" />
+        </div>
+        <div class="form-group">
+          <div class="checkbox-container">
+            <input id="iswrite" type="checkbox" [(ngModel)]="newRule.iswrite"/>
+            <label for="iswrite">启用写入</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>读符号</label>
+          <div class="symbol-selector">
+            <button class="symbol-btn" [class.active]="newRule.inputSymbol === '0'" (click)="newRule.inputSymbol = '0'">0</button>
+            <button class="symbol-btn" [class.active]="newRule.inputSymbol === '1'" (click)="newRule.inputSymbol = '1'">1</button>
+            <button class="symbol-btn" [class.active]="newRule.inputSymbol === '+'" (click)="newRule.inputSymbol = '+'">+</button>
+            <button class="symbol-btn" [class.active]="newRule.inputSymbol === '*'" (click)="newRule.inputSymbol = '*'">*</button>
+            <button class="symbol-btn" [class.active]="newRule.inputSymbol === ' '" (click)="newRule.inputSymbol = ' '">空格</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧列 -->
+      <div class="column right-column">
+        <div class="form-group" *ngIf="newRule.iswrite">
+          <label>写符号</label>
+          <div class="symbol-selector">
+            <button class="symbol-btn" [class.active]="newRule.outputSymbol === '0'" (click)="newRule.outputSymbol = '0'">0</button>
+            <button class="symbol-btn" [class.active]="newRule.outputSymbol === '1'" (click)="newRule.outputSymbol = '1'">1</button>
+            <button class="symbol-btn" [class.active]="newRule.outputSymbol === '+'" (click)="newRule.inputSymbol = '+'">+</button>
+            <button class="symbol-btn" [class.active]="newRule.outputSymbol === '*'" (click)="newRule.inputSymbol = '*'">*</button>
+            <button class="symbol-btn" [class.active]="newRule.outputSymbol === ' '" (click)="newRule.outputSymbol = ' '">空格</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>移动方向</label>
+          <div class="direction-selector">
+            <button class="direction-btn" [class.active]="newRule.moveDirection === 'L'" (click)="newRule.moveDirection = 'L'">左移 (L)</button>
+            <button class="direction-btn" [class.active]="newRule.moveDirection === 'S'" (click)="newRule.moveDirection = 'S'">不动 (S)</button>
+            <button class="direction-btn" [class.active]="newRule.moveDirection === 'R'" (click)="newRule.moveDirection = 'R'">右移 (R)</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="nextState">下一个状态</label>
+          <select id="nextState" [(ngModel)]="newRule.nextState">
+            <option value="">请选择...</option>
+            <option *ngFor="let s of availableStates" [value]="s">{{ s }}</option>
+            <option value="other">其他...</option>
+          </select>
+        </div>
+        <div class="form-group" *ngIf="newRule.nextState === 'other'">
+          <label for="customState_n">自定义状态</label>
+          <input
+            id="customState_n"
+            type="text"
+            [(ngModel)]="newRule.customState_n"
+            name="customState_n"
+            placeholder="请输入自定义状态名称" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn add-btn" (click)="onAddRule()">
+        <i class="fas fa-plus-circle"></i> 添加规则
+      </button>
+      <button class="btn clear-btn" (click)="clearForm()">
+        <i class="fas fa-eraser"></i> 清空
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="ruleInputError" class="error-message">
+    <i class="fas fa-exclamation-triangle"></i> {{ ruleInputError }}
+  </div>
+</div>

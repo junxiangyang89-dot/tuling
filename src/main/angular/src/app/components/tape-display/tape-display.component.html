@@ -1,0 +1,9 @@
+<div class="tape">
+  <span
+    *ngFor="let symbol of tape; let idx = index"
+    class="cell"
+    (click)="onCellClick(idx)"
+    [class.head]="idx === contextRadius">
+    {{ symbol }}
+  </span>
+</div>

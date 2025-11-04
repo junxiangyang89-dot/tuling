@@ -1,0 +1,67 @@
+<div class="chat-container">
+  <!-- 聊天头部 -->
+  <div class="chat-header">
+    <!-- 第一行：图标 + 标题 -->
+    <div class="header-title flex items-center">
+      <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white mr-3">
+        <i class="fa fa-comments"></i>
+      </div>
+      <h2 class="text-lg font-semibold">多人实时聊天</h2>
+    </div>  
+    <!-- 第二行：当前用户显示 -->
+    <div class="header-user text-sm text-gray-600 mt-1">
+      当前用户: <span class="font-medium">{{ sender }}</span>
+    </div>
+  </div>  
+
+  <!-- 聊天消息区域 -->
+  <div id="chat-messages-container" class="chat-messages overflow-y-auto">
+<!--    &lt;!&ndash; 系统消息 &ndash;&gt;-->
+<!--    <div *ngIf="messages.length === 0" class="system-message">-->
+<!--      <div class="bg-gray-100 rounded-lg p-3 mx-auto max-w-xs text-center text-sm text-gray-600">-->
+<!--        欢迎加入聊天室，开始聊天吧-->
+<!--      </div>-->
+<!--    </div>-->
+
+    <!-- 消息列表 -->
+    <div *ngFor="let message of messages" class="all-message" [ngClass]="{
+      'system-message': message.type === 'SYSTEM',
+      'user-message': message.type === 'CHAT'
+    }">
+      <div class="message-content">
+        <div class="message-bubble">
+          <!-- 所有消息都显示消息头部：用户名和时间 -->
+          <div class="message-header">
+            <span class="username">{{ message.sender }}</span>
+            <span *ngIf="message.timestamp" class="message-time">
+              {{ formatTime(message.timestamp) }}
+            </span>
+          </div>
+          <!-- 消息内容 -->
+          <div class="message-text">{{ message.content }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 输入区域 -->
+  <div class="chat-input-area">
+    <div class="input-group">
+      <input
+        type="text"
+        [(ngModel)]="messageContent"
+        (keydown.enter)="onSendMessage()"
+        placeholder="输入消息..."
+        class="flex-1 border border-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"
+      >
+      <button
+        (click)="onSendMessage()"
+        [disabled]="!messageContent.trim()"
+        class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-r-lg transition-all duration-200 flex items-center justify-center"
+      >
+        <i class="fa fa-paper-plane"></i>
+        <span class="ml-1">发送</span>
+      </button>
+    </div>
+  </div>
+</div>

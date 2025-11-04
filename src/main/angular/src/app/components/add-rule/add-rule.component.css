@@ -1,0 +1,215 @@
+.add-rule-panel { 
+    width: 100%;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.panel-header {
+    background-color: #e9ecef;
+    padding: 10px 15px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.panel-header h3 {
+    margin: 0;
+    font-size: 16px;
+    color: #495057;
+}
+
+.form-container {
+    padding: 12px;
+}
+
+/* 两列布局 */
+.columns-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.column {
+    flex: 1;
+    min-width: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.left-column {
+    flex: 0.9;
+}
+
+.right-column {
+    flex: 1.1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-size: 13px;
+    color: #495057;
+    margin-bottom: 4px;
+}
+
+.form-group select, 
+.form-group input[type="text"] {
+    padding: 6px 8px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.form-group select:focus, 
+.form-group input:focus {
+    border-color: #80bdff;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    margin-top: 0;
+}
+
+.checkbox-container input[type="checkbox"] {
+    margin-right: 5px;
+}
+
+.checkbox-container label {
+    margin-bottom: 0;
+    font-size: 13px;
+}
+
+/* 符号选择器 */
+.symbol-selector {
+    display: flex;
+    gap: 4px;
+}
+
+.symbol-btn {
+    flex: 1;
+    padding: 6px 0;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+}
+
+.symbol-btn:hover {
+    background-color: #e9ecef;
+}
+
+.symbol-btn.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+/* 方向选择器 */
+.direction-selector {
+    display: flex;
+    gap: 4px;
+}
+
+.direction-btn {
+    flex: 1;
+    padding: 6px 0;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 13px;
+}
+
+.direction-btn:hover {
+    background-color: #e9ecef;
+}
+
+.direction-btn.active {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 5px;
+}
+
+/* 响应式设计 */
+@media (max-width: 600px) {
+    .columns-layout {
+        flex-direction: column;
+    }
+    
+    .column {
+        width: 100%;
+    }
+    
+    .form-actions {
+        justify-content: space-between;
+        width: 100%;
+    }
+    
+    .btn {
+        flex: 1;
+    }
+}
+
+.btn {
+    padding: 7px 12px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+}
+
+.add-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.add-btn:hover {
+    background-color: #218838;
+}
+
+.clear-btn {
+    background-color: #6c757d;
+    color: white;
+}
+
+.clear-btn:hover {
+    background-color: #5a6268;
+}
+
+.error-message {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    padding: 8px 12px;
+    border-radius: 4px;
+    margin: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+}

@@ -1,0 +1,54 @@
+<div class="challenge-mode-container">
+    <div class="navigation-bar">
+      <div class="left-nav">
+        <button class="nav-button" (click)="navigateToWelcome()">切换模式</button>
+      </div>
+      <h1 class="mode-title">挑战模式</h1>
+      <div class="right-nav">
+        <div class="username-display" *ngIf="currentUsername">
+          当前用户: {{ currentUsername }}
+        </div>
+        <button class="logout-btn" style="background-color: #3498db; color: white;" (click)="to_login()">返回登录界面</button>
+        <button class="logout-button" (click)="logout()">退出登录</button>
+      </div>
+    </div>
+
+    <div class="mode-header">
+      <p class="intro">
+        欢迎进入挑战模式！请选择一道挑战题目，通过编写图灵机规则完成任务。
+      </p>
+      <div class="selection-box">
+        <label for="test-select">选择题目：</label>
+        <select id="test-select" [(ngModel)]="selectedTestId">
+          <option [ngValue]="null" disabled selected>-- 请选择 --</option>
+          <option *ngFor="let test of testCases" [ngValue]="test.id">
+            {{ test.title }}
+          </option>
+        </select>
+
+        <button (click)="createMachine()" [disabled]="!selectedTestId">
+          进入
+        </button>
+      </div>
+    </div>
+
+  <!-- 图灵机列表 -->
+  <div class="machine-list" *ngIf="machines.length > 0">
+    <h2>已有图灵机</h2>
+    <div class="machine-grid">
+      <div class="machine-card" *ngFor="let machine of machines" (click)="selectMachine(machine)">
+        <div class="machine-name">{{ machine.name }}</div>
+        <div class="machine-description">{{ machine.description || '无描述' }}</div>
+        <div class="machine-time">创建时间: {{ machine.createTime | date:'yyyy-MM-dd HH:mm' }}</div>
+<!--        <button class="delete-button" (click)="deleteMachine(machine.id, $event)">删除</button>-->
+      </div>
+    </div>
+  </div>
+
+  <div class="no-machines" *ngIf="machines.length === 0">
+    <p>暂无图灵机，请创建新的图灵机。</p>
+  </div>
+</div>
+
+  <!-- 在 router-outlet 中显示选中的图灵机 -->
+  <router-outlet></router-outlet>

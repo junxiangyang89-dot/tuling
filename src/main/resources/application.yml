@@ -1,0 +1,8 @@
+ai:
+  endpoint: https://api.your-model-provider.com/v1/chat/completions
+  api-key: YOUR_MODEL_PROVIDER_API_KEY
+server:
+  port: 8080
+spring:
+  main:
+    allow-bean-definition-overriding: true

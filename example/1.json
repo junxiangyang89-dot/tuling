@@ -1,0 +1,18 @@
+{
+  "name": "BinaryIncrement",
+  "description": "对二进制数加1，例如 111 加1变为 1000",
+  "configuration": {
+    "initialState": "q0",
+    "acceptingStates": ["qAccept"],
+    "tape": "111",
+    "rules": [
+      { "currentState": "q0", "readSymbol": "1", "writeSymbol": "1", "move": "R", "nextState": "q0" },
+      { "currentState": "q0", "readSymbol": "0", "writeSymbol": "0", "move": "R", "nextState": "q0" },
+      { "currentState": "q0", "readSymbol": " ", "writeSymbol": " ", "move": "L", "nextState": "q1" },
+
+      { "currentState": "q1", "readSymbol": "1", "writeSymbol": "0", "move": "L", "nextState": "q1" },
+      { "currentState": "q1", "readSymbol": "0", "writeSymbol": "1", "move": "L", "nextState": "qAccept" },
+      { "currentState": "q1", "readSymbol": " ", "writeSymbol": "1", "move": "R", "nextState": "qAccept" }
+    ]
+  }
+}

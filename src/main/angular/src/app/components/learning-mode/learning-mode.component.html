@@ -1,0 +1,58 @@
+<div class="learning-mode-container">
+  <div class="navigation-bar">
+    <div class="left-nav">
+      <button class="nav-button" (click)="navigateToWelcome()">切换模式</button>
+    </div>
+    <div class="right-nav">
+      <div class="username-display" *ngIf="currentUsername">
+        当前用户: {{ currentUsername }}
+      </div>
+      <button class="logout-btn" style="background-color: #3498db; color: white;" (click)="to_login()">返回登录界面</button>
+      <button class="logout-button" (click)="logout()">退出登录</button>
+    </div>
+  </div>
+  <div class="mode-header">
+    <h1>学习模式</h1>
+    <p>在这种模式下，您可以学习图灵机的概念和用法，有引导式的教程和案例。</p>
+    <button (click)="toggleCreateForm()" class="create-button">
+      {{ showCreate ? '取消创建' : '创建新图灵机' }}
+    </button>
+  </div>
+
+  <!-- 创建新图灵机表单 -->
+  <div *ngIf="showCreate" class="create-form">
+    <h2>创建新图灵机</h2>
+    <div class="form-group">
+      <label for="machine-name">名称</label>
+      <input type="text" id="machine-name" [(ngModel)]="newMachine.name" placeholder="输入图灵机名称">
+    </div>
+    <div class="form-group">
+      <label for="machine-description">描述</label>
+      <textarea id="machine-description" [(ngModel)]="newMachine.description" placeholder="输入图灵机描述（可选）"></textarea>
+    </div>
+    <div class="form-actions">
+      <button (click)="createMachine()" class="submit-button">创建</button>
+      <button (click)="toggleCreateForm()" class="cancel-button">取消</button>
+    </div>
+  </div>
+
+  <!-- 图灵机列表 -->
+  <div class="machine-list" *ngIf="machines.length > 0">
+    <h2>已有图灵机</h2>
+    <div class="machine-grid">
+      <div class="machine-card" *ngFor="let machine of machines" (click)="selectMachine(machine)">
+        <div class="machine-name">{{ machine.name }}</div>
+        <div class="machine-description">{{ machine.description || '无描述' }}</div>
+        <div class="machine-time">创建时间: {{ machine.createTime | date:'yyyy-MM-dd HH:mm' }}</div>
+        <button class="delete-button" (click)="deleteMachine(machine.id, $event)">删除</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-machines" *ngIf="machines.length === 0">
+    <p>暂无图灵机，请创建新的图灵机。</p>
+  </div>
+</div>
+
+<!-- 在 router-outlet 中显示选中的图灵机 -->
+<router-outlet></router-outlet>

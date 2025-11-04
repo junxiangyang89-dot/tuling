@@ -1,0 +1,55 @@
+<div class="turing-manager">
+  <!-- 侧边栏开关按钮 -->
+  <button class="sidebar-toggle" (click)="toggleSidebar()">
+    {{ showSidebar ? '关闭菜单' : '图灵机列表' }}
+  </button>
+  
+  <!-- 侧边栏 -->
+  <div class="sidebar" [class.active]="showSidebar">
+    <div class="sidebar-header">
+      <h3>图灵机管理</h3>
+      <button class="create-button" (click)="toggleCreateForm()">新建图灵机</button>
+    </div>
+    
+    <!-- 图灵机列表 -->
+    <div class="machine-list">
+      <div *ngIf="machines.length === 0" class="empty-list">
+        暂无图灵机，请创建一个新的。
+      </div>
+      <div *ngFor="let machine of machines" 
+           class="machine-item"
+           (click)="selectMachine(machine)">
+        <h4>{{ machine.name }}</h4>
+        <p *ngIf="machine.description">{{ machine.description }}</p>
+        <p *ngIf="machine.createTime">创建时间: {{ machine.createTime | date:'short' }}</p>
+        <div class="status" [class.completed]="machine.isCompleted">
+          {{ machine.isCompleted ? '已完成' : '未完成' }}
+        </div>
+        <button (click)="deleteMachine(machine.id); $event.stopPropagation()">删除</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 创建图灵机表单 (弹出层) -->
+  <div class="create-form-overlay" *ngIf="showCreateForm" (click)="toggleCreateForm()">
+    <div class="create-form" (click)="$event.stopPropagation()">
+      <h3>创建新图灵机</h3>
+      <div class="form-group">
+        <label for="name">名称</label>
+        <input type="text" id="name" [(ngModel)]="newMachine.name" placeholder="输入图灵机名称">
+      </div>
+      <div class="form-group">
+        <label for="description">描述</label>
+        <textarea id="description" [(ngModel)]="newMachine.description" placeholder="输入图灵机描述（可选）"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="tape">初始纸带</label>
+        <input type="text" id="tape" [(ngModel)]="newMachine.configuration.tape" placeholder="输入初始纸带内容">
+      </div>
+      <div class="form-actions">
+        <button (click)="toggleCreateForm()">取消</button>
+        <button class="primary" (click)="createMachine()">创建</button>
+      </div>
+    </div>
+  </div>
+</div> 

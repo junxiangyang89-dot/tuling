@@ -1,0 +1,29 @@
+<div class="welcome-container">
+    <div class="welcome-header">
+        <h1>欢迎使用图灵机模拟器！</h1>
+        <div class="user-info">
+            <span class="username">当前用户: {{ username }}</span>
+            <button class="logout-btn" (click)="to_login()">返回登录界面</button>
+        </div>
+    </div>
+    
+    <div class="mode-selection">
+        <div class="mode-card" (click)="navigateToFreeMode()">
+            <h2>自由模式</h2>
+            <p>自由创建和编辑图灵机，探索计算理论</p>
+            <button>进入</button>
+        </div>
+        
+        <div class="mode-card" (click)="navigateToLearningMode()">
+            <h2>学习模式</h2>
+            <p>通过指导学习图灵机的基本概念和操作</p>
+            <button>进入</button>
+        </div>
+        
+        <div class="mode-card" (click)="navigateToChallengeMode()">
+            <h2>挑战模式</h2>
+            <p>接受挑战，解决各种复杂问题</p>
+            <button>进入</button>
+        </div>
+    </div>
+</div>

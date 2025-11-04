@@ -1,0 +1,21 @@
+<div class="assistant-container">
+    <div class="message-list">
+      <div
+        *ngFor="let msg of messages"
+        [ngClass]="{ 'user-msg': msg.role === 'user', 'assistant-msg': msg.role === 'assistant' }"
+        class="message">
+        {{ msg.content }}
+      </div>
+      <div *ngIf="loading" class="message assistant-msg">AI 正在输入...</div>
+    </div>
+    <div class="input-bar">
+      <input
+        [(ngModel)]="userInput"
+        (keydown.enter)="send()"
+        placeholder="输入问题，回车即可发送…"
+        [disabled]="loading"/>
+      <button (click)="send()" [disabled]="loading || !userInput.trim()">
+        {{ loading ? '等待中…' : '发送' }}
+      </button>
+    </div>
+  </div>

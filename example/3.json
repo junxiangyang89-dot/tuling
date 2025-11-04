@@ -1,0 +1,55 @@
+{
+  "name": "Binary Multiplication",
+  "description": "将两个以 # 符号分隔的二进制数相乘，例如 '101#11' = 5 * 3 = 1111。",
+  "configuration": {
+    "initialState": "q0",
+    "acceptingStates": [
+      "qAccept"
+    ],
+    "tape": "101#11",
+    "rules": [
+      {
+        "currentState": "q0",
+        "readSymbol": "1",
+        "nextState": "q1",
+        "writeSymbol": "1",
+        "move": "R"
+      },
+      {
+        "currentState": "q0",
+        "readSymbol": "0",
+        "nextState": "q1",
+        "writeSymbol": "0",
+        "move": "R"
+      },
+      {
+        "currentState": "q0",
+        "readSymbol": "#",
+        "nextState": "q2",
+        "writeSymbol": "#",
+        "move": "R"
+      },
+      {
+        "currentState": "q2",
+        "readSymbol": "1",
+        "nextState": "q2",
+        "writeSymbol": "1",
+        "move": "R"
+      },
+      {
+        "currentState": "q2",
+        "readSymbol": "0",
+        "nextState": "q2",
+        "writeSymbol": "0",
+        "move": "R"
+      },
+      {
+        "currentState": "q2",
+        "readSymbol": " ",
+        "nextState": "qAccept",
+        "writeSymbol": " ",
+        "move": "S"
+      }
+    ]
+  }
+}

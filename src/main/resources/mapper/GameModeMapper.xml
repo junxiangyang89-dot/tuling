@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.webpj.mapper.GameModeMapper">
+    <resultMap id="BaseResultMap" type="com.example.webpj.entity.GameMode">
+        <id column="id" property="id"/>
+        <result column="mode_name" property="modeName"/>
+        <result column="description" property="description"/>
+        <result column="is_active" property="isActive"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, mode_name, description, is_active, create_time, update_time
+    </sql>
+
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM game_mode
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM game_mode
+    </select>
+
+    <select id="selectByModeName" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM game_mode
+        WHERE mode_name = #{modeName}
+    </select>
+
+    <insert id="insert" parameterType="com.example.webpj.entity.GameMode">
+        INSERT INTO game_mode (mode_name, description, is_active, create_time, update_time)
+        VALUES (#{modeName}, #{description}, #{isActive}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.webpj.entity.GameMode">
+        UPDATE game_mode
+        SET mode_name = #{modeName},
+            description = #{description},
+            is_active = #{isActive},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM game_mode WHERE id = #{id}
+    </delete>
+</mapper> 

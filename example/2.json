@@ -1,0 +1,46 @@
+{
+  "name": "BinaryPalindrome",
+  "description": "判断纸带是否是二进制回文串（如 101、1001）",
+  "configuration": {
+    "initialState": "q0",
+    "acceptingStates": ["qAccept"],
+    "tape": "1001",
+    "rules": [
+      { "currentState": "q0", "readSymbol": "1", "writeSymbol": "X", "move": "R", "nextState": "q1_1" },
+      { "currentState": "q0", "readSymbol": "0", "writeSymbol": "Y", "move": "R", "nextState": "q1_0" },
+      { "currentState": "q0", "readSymbol": "X", "writeSymbol": "X", "move": "R", "nextState": "q0" },
+      { "currentState": "q0", "readSymbol": "Y", "writeSymbol": "Y", "move": "R", "nextState": "q0" },
+      { "currentState": "q0", "readSymbol": " ", "writeSymbol": " ", "move": "L", "nextState": "qCheck" },
+
+      { "currentState": "q1_1", "readSymbol": "0", "writeSymbol": "0", "move": "R", "nextState": "q1_1" },
+      { "currentState": "q1_1", "readSymbol": "1", "writeSymbol": "1", "move": "R", "nextState": "q1_1" },
+      { "currentState": "q1_1", "readSymbol": "X", "writeSymbol": "X", "move": "R", "nextState": "q1_1" },
+      { "currentState": "q1_1", "readSymbol": "Y", "writeSymbol": "Y", "move": "R", "nextState": "q1_1" },
+      { "currentState": "q1_1", "readSymbol": " ", "writeSymbol": " ", "move": "L", "nextState": "q2_1" },
+
+      { "currentState": "q2_1", "readSymbol": "1", "writeSymbol": "X", "move": "L", "nextState": "qBack" },
+      { "currentState": "q2_1", "readSymbol": "X", "writeSymbol": "X", "move": "L", "nextState": "q2_1" },
+      { "currentState": "q2_1", "readSymbol": "Y", "writeSymbol": "Y", "move": "L", "nextState": "q2_1" },
+
+      { "currentState": "q1_0", "readSymbol": "0", "writeSymbol": "0", "move": "R", "nextState": "q1_0" },
+      { "currentState": "q1_0", "readSymbol": "1", "writeSymbol": "1", "move": "R", "nextState": "q1_0" },
+      { "currentState": "q1_0", "readSymbol": "X", "writeSymbol": "X", "move": "R", "nextState": "q1_0" },
+      { "currentState": "q1_0", "readSymbol": "Y", "writeSymbol": "Y", "move": "R", "nextState": "q1_0" },
+      { "currentState": "q1_0", "readSymbol": " ", "writeSymbol": " ", "move": "L", "nextState": "q2_0" },
+
+      { "currentState": "q2_0", "readSymbol": "0", "writeSymbol": "Y", "move": "L", "nextState": "qBack" },
+      { "currentState": "q2_0", "readSymbol": "X", "writeSymbol": "X", "move": "L", "nextState": "q2_0" },
+      { "currentState": "q2_0", "readSymbol": "Y", "writeSymbol": "Y", "move": "L", "nextState": "q2_0" },
+
+      { "currentState": "qBack", "readSymbol": "0", "writeSymbol": "0", "move": "L", "nextState": "qBack" },
+      { "currentState": "qBack", "readSymbol": "1", "writeSymbol": "1", "move": "L", "nextState": "qBack" },
+      { "currentState": "qBack", "readSymbol": "X", "writeSymbol": "X", "move": "L", "nextState": "qBack" },
+      { "currentState": "qBack", "readSymbol": "Y", "writeSymbol": "Y", "move": "L", "nextState": "qBack" },
+      { "currentState": "qBack", "readSymbol": " ", "writeSymbol": " ", "move": "R", "nextState": "q0" },
+
+      { "currentState": "qCheck", "readSymbol": "X", "writeSymbol": "X", "move": "R", "nextState": "qCheck" },
+      { "currentState": "qCheck", "readSymbol": "Y", "writeSymbol": "Y", "move": "R", "nextState": "qCheck" },
+      { "currentState": "qCheck", "readSymbol": " ", "writeSymbol": " ", "move": "R", "nextState": "qAccept" }
+    ]
+  }
+}

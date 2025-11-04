@@ -1,0 +1,12 @@
+<div class="state-container">
+  <div class="state-display">
+    当前状态：
+    <span [class.accept]="currentState === acceptState">
+      {{ currentState }}
+    </span>
+  
+  </div>
+  <div class="steps">
+    执行步数：{{ currentSteps }}
+  </div>
+</div>

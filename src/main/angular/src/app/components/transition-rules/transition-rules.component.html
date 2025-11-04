@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="..." crossorigin="anonymous" />
+<div class="container">
+  <div class="rules-header">
+    <h4>已定义规则</h4>
+    <div class="rule-name">{{rulename}}</div>
+  </div>
+
+  <div class="rules-management">
+    <div class="rule-selector">
+      <select id="ruleSelector" [(ngModel)]="rulename" (change)="onSelectRule(rulename)">
+        <option *ngFor="let name of ruleNames" [value]="name">{{ name }}</option>
+      </select>
+    </div>
+    <div *ngIf="currentMode !== 'learning-mode'" class="rule-actions">
+      <button class="action-btn save-btn" (click)="saveRulesToDB()" title="保存当前规则集">
+        <i class="fas fa-save"></i> 保存
+      </button>
+      <button class="action-btn new-btn" (click)="showNewRulePrompt()" title="创建新规则集">
+        <i class="fas fa-plus"></i> 新建
+      </button>
+      <button class="action-btn clear-btn" (click)="clearRules()" title="清除所有规则">
+        <i class="fas fa-trash"></i> 清除
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="currentMode !== 'learning-mode'" class="db-actions">
+    <button class="db-action-btn delete-sample-btn" (click)="deleteSampleRules()" title="一键删除SampleMachine规则集">
+      <i class="fas fa-trash-alt"></i> 删除Sample规则
+    </button>
+    <button class="db-action-btn clear-all-btn" (click)="clearAllRules()" title="清空数据库中的所有规则">
+      <i class="fas fa-database"></i> 清空所有规则
+    </button>
+  </div>
+
+  <table class="rules-table">
+    <thead>
+      <tr>
+        <th>当前状态</th>
+        <th>读符号</th>
+        <th>写符号</th>
+        <th>方向</th>
+        <th>下一个状态</th>
+        <th *ngIf="currentMode !== 'learning-mode'">操作</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let r of rules; let i = index">
+        <td>{{ r.currentState }}</td>
+        <td>{{ r.inputSymbol === ' ' ? '␣' : r.inputSymbol }}</td>
+        <td>{{ r.iswrite ? (r.outputSymbol === ' ' ? '␣' : r.outputSymbol) : '-' }}</td>
+        <td>{{ r.moveDirection }}</td>
+        <td>{{ r.nextState }}</td>
+        <td *ngIf="currentMode !== 'learning-mode'">
+          <button class="delete-btn" (click)="deleteRule(i)" title="删除此规则">
+            <i class="fas fa-times"></i> 删除
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="rules.length === 0">
+        <td 
+          [attr.colspan]="currentMode === 'learning-mode' ? 5 : 6"
+          class="empty-rules">暂无规则，请添加</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="save-hint" *ngIf="rules.length > 0">
+    别忘了点击"保存"按钮保存您的更改！
+  </div>
+</div>
