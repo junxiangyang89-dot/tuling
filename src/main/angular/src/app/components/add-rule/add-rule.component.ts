@@ -14,6 +14,7 @@ export class AddRuleComponent {
   // 渲染"添加规则"表单、校验输入并提交新规则
   @Input() availableStates: string[] = [];
   @Output() addRule = new EventEmitter<TransitionRule>();
+  @Output() addCustomState = new EventEmitter<string>();
 
   /** 用户在表单中构建的新规则 */
   newRule: Partial<TransitionRule & { customState_c?: string; customState_n?: string}> = {
@@ -83,19 +84,28 @@ export class AddRuleComponent {
     }
 
     // 更新outputSymbol和moveDirection以保持兼容
-    this.newRule.outputSymbol = iswrite ? (outputSymbol || inputSymbol) : inputSymbol;
+    // 修复：当iswrite为true时，即使outputSymbol为空字符串也应保留它，不替换为inputSymbol
+    this.newRule.outputSymbol = iswrite ? outputSymbol : inputSymbol;
     this.newRule.moveDirection = moveDirection as 'L' | 'R' | 'S';
 
     // 确保输出的rule对象同时包含新旧属性，完全兼容
     const ruleToEmit: TransitionRule = {
       currentState: state_c,
       inputSymbol: inputSymbol,
-      outputSymbol: this.newRule.outputSymbol,
+      outputSymbol: this.newRule.outputSymbol || '',
       moveDirection: this.newRule.moveDirection as 'L' | 'R' | 'S',
       nextState: state_n,
       iswrite: this.newRule.iswrite!
     };
 
+    // 如果使用了自定义状态，通知父组件添加到可用状态列表
+    if (this.newRule.currentState === 'other') {
+      this.addCustomState.emit(customState_c.trim());
+    }
+    if (this.newRule.nextState === 'other') {
+      this.addCustomState.emit(customState_n.trim());
+    }
+    
     // 校验通过，发射事件并重置表单
     this.addRule.emit(ruleToEmit);
     this.clearForm();

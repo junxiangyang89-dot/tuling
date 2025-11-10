@@ -20,6 +20,7 @@ export class UserRegisterComponent implements OnInit {
   login_data = {
     username: '',
     password: ''
+    ,role: 'STUDENT' // 前端选择：STUDENT 或 TEACHER。服务器返回的 role 为最终权威值。
   };
 
   register_data = {
@@ -45,25 +46,7 @@ export class UserRegisterComponent implements OnInit {
 
   constructor(public http:HttpClient, private router: Router) { }
 
-  ngOnInit() {
-    // 加载已登录用户列表
-    this.loadLoggedUsers();
-
-    // 检查是否有当前登录用户
-    const currentUserInfo = sessionStorage.getItem('currentUserInfo');
-    if (currentUserInfo) {
-      try {
-        const userInfo = JSON.parse(currentUserInfo);
-        if (userInfo && userInfo.username && userInfo.token) {
-          this.isLoggedIn = true;
-        }
-      } catch (e) {
-        console.error('解析用户信息失败', e);
-      }
-    }
-  }
-
-  // 加载已登录用户列表
+  // 加载已登录用户列表（用于多用户管理）
   private loadLoggedUsers(): void {
     try {
       const loggedUsersString = localStorage.getItem('loggedUsers');
@@ -85,9 +68,27 @@ export class UserRegisterComponent implements OnInit {
       localStorage.setItem('loggedUsers', JSON.stringify(this.loggedUsers));
     }
   }
+  
+  ngOnInit() {
+    // 加载已登录用户列表
+    this.loadLoggedUsers();
+
+    // 检查是否有当前登录用户
+    const currentUserInfo = sessionStorage.getItem('currentUserInfo');
+    if (currentUserInfo) {
+      try {
+        const userInfo = JSON.parse(currentUserInfo);
+        if (userInfo && userInfo.username && userInfo.token) {
+          this.isLoggedIn = true;
+        }
+      } catch (e) {
+        console.error('解析用户信息失败', e);
+      }
+    }
+  }
 
   login() {
-          const url = environment.apiUrl + "/auth/login";  // 登录接口地址
+    const url = environment.apiUrl + "/auth/login";  // 登录接口地址
     const httpOptions = {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
     };
@@ -101,10 +102,14 @@ export class UserRegisterComponent implements OnInit {
         if (response.code == 200) {
           // 存储用户信息到本地存储
           if (response.data && response.data.token) {
+            // 服务器会返回 token，并且（如果存在）返回 role；前端选择的 role 仅作展示/备选，真实权限以服务器为准
+            const serverRole = response.data.role || this.login_data.role || 'STUDENT';
+
             // 创建一个包含用户所有信息的对象
-            const userInfo = {
+            const userInfo: any = {
               username: this.login_data.username,
               token: response.data.token,
+              role: serverRole,
               loginTime: new Date().toISOString()
             };
 
@@ -114,7 +119,6 @@ export class UserRegisterComponent implements OnInit {
             // 同时将用户信息保存到localStorage中，以支持多用户
             localStorage.setItem(`user_${this.login_data.username}`, JSON.stringify(userInfo));
             localStorage.setItem('currentUserInfo', JSON.stringify(userInfo));
-            
 
             // 保存所有已登录用户名列表
             if (!this.loggedUsers.includes(this.login_data.username)) {
@@ -209,7 +213,7 @@ export class UserRegisterComponent implements OnInit {
           window.alert(res.msg || '重置失败');
         }
       },
-      error: err => {
+      error: (err: any) => {
         console.error(err);
         window.alert('服务器异常，请稍后再试');
       }

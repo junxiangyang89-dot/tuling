@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.webpj.mapper.ChallengeQuestionMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.webpj.entity.ChallengeQuestion">
+        <id column="id" property="id" />
+        <result column="title" property="title" />
+        <result column="description" property="description" />
+        <result column="testcase_json" property="testcaseJson" />
+        <result column="creator_user_id" property="creatorUserId" />
+        <result column="creator_username" property="creatorUsername" />
+        <result column="status" property="status" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM challenge_question ORDER BY create_time DESC
+    </select>
+
+    <select id="selectByStatus" resultMap="BaseResultMap" parameterType="string">
+        SELECT * FROM challenge_question WHERE status = #{status} ORDER BY create_time DESC
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="long">
+        SELECT * FROM challenge_question WHERE id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.example.webpj.entity.ChallengeQuestion" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO challenge_question (title, description, testcase_json, creator_user_id, creator_username, status, create_time, update_time)
+        VALUES (#{title}, #{description}, #{testcaseJson}, #{creatorUserId}, #{creatorUsername}, #{status}, #{createTime}, #{updateTime})
+    </insert>
+
+    <update id="update" parameterType="com.example.webpj.entity.ChallengeQuestion">
+        UPDATE challenge_question
+        SET title = #{title}, description = #{description}, testcase_json = #{testcaseJson}, update_time = #{updateTime}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById" parameterType="long">
+        DELETE FROM challenge_question WHERE id = #{id}
+    </delete>
+
+    <update id="updateStatus">
+        UPDATE challenge_question SET status = #{status}, update_time = NOW() WHERE id = #{id}
+    </update>
+
+</mapper>

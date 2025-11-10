@@ -39,6 +39,10 @@ public class UserServiceImpl implements UserService {
 
         // 加密密码
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        // 默认角色为 STUDENT（学生），如果已有其他值则保留
+        if (user.getRole() == null || user.getRole().trim().isEmpty()) {
+            user.setRole("STUDENT");
+        }
         userMapper.insert(user);
     }
 

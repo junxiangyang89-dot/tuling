@@ -26,6 +26,8 @@ public class User implements Serializable {
     private Integer status;
     private Date createTime;
     private Date updateTime;
+    /** 用户角色：STUDENT / TEACHER */
+    private String role;
 }
 
 

@@ -1,5 +1,7 @@
 version: '3.8'
 
+name: webpj
+
 services:
   mysql:
     image: mysql:8.0

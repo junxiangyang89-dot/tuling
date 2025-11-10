@@ -4,7 +4,9 @@
         *ngFor="let msg of messages"
         [ngClass]="{ 'user-msg': msg.role === 'user', 'assistant-msg': msg.role === 'assistant' }"
         class="message">
-        {{ msg.content }}
+        <div class="bubble">
+          <div class="message-text">{{ msg.content }}</div>
+        </div>
       </div>
       <div *ngIf="loading" class="message assistant-msg">AI 正在输入...</div>
     </div>

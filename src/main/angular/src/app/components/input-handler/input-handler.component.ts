@@ -22,12 +22,12 @@ export class InputHandlerComponent {
 
   loadUserInput() {
     const trimmed = this.userInput.trim();
-    if (/^[01]*$/.test(trimmed)) {
+    if (/^[01+* ]*$/.test(trimmed)) {
       const newTape = new Tape(' ', trimmed.split(''));
       this.tapeUpdated.emit(newTape);
       this.inputError = '';
     } else {
-      this.inputError = '输入无效，只能包含0和1';
+      this.inputError = '输入无效，请检查输入内容';
     }
   }
 } 

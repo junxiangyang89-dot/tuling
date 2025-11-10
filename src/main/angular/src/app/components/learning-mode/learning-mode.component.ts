@@ -23,6 +23,7 @@ export class LearningModeComponent implements OnInit, AfterViewInit {
   mode: string = 'learning-mode';
   showCreate: boolean = false;
   currentUsername: string | null = null;
+  currentUserRole: string | null = null;
   newMachine = {
     name: 'SampleMachine',
     description: '',
@@ -35,6 +36,8 @@ export class LearningModeComponent implements OnInit, AfterViewInit {
       rules: []
     }
   };
+  // 存放已提交的优秀作业（临时展示）
+  excellentSubmissions: TuringMachineInfo[] = [];
 
   constructor(
     private turingService: TuringMachineService,
@@ -66,6 +69,52 @@ export class LearningModeComponent implements OnInit, AfterViewInit {
     if (this.currentUsername) {
       this.newMachine.username = this.currentUsername;
     }
+    // 尝试读取角色信息
+    try {
+      const currentUserInfo = sessionStorage.getItem('currentUserInfo');
+      if (currentUserInfo) {
+        const info = JSON.parse(currentUserInfo);
+        this.currentUserRole = info.role || null;
+        console.log('当前用户角色:', this.currentUserRole);
+      }
+    } catch (e) {
+      console.error('解析 currentUserInfo 失败', e);
+    }
+  }
+
+  // 学生点击“优秀作业申请”提交当前作业到 challenge-mode（服务器会保存为新的题目）
+  submitExcellentAssignment(machine?: TuringMachineInfo): void {
+    // 仅学生可提交（前端判断）
+    if (this.currentUserRole !== 'STUDENT') {
+      alert('仅学生可以申请优秀作业');
+      return;
+    }
+    // 强制要求传入已存在的图灵机，不允许从创建表单直接提交
+    if (!machine) {
+      alert('请选择已创建的图灵机，然后点击“提交为优秀作业”进行申请。');
+      return;
+    }
+
+    const payload: any = { ...machine };
+    // 标记为优秀作业来源
+    payload.title = payload.name || '优秀作业';
+    payload.isExcellentSubmission = true;
+
+    this.turingService.createMachineInMode('challenge-mode', payload).subscribe({
+      next: (res: any) => {
+        alert('优秀作业提交成功，已发送给教师审阅');
+        // 将提交加入本地展示列表（如果服务器返回了新 id，可使用）
+        if (res && res.data) {
+          const newId = res.data;
+          const info: TuringMachineInfo = { id: newId, name: payload.title, description: payload.description || '', createTime: new Date().toISOString(), mode: 'challenge-mode', username: this.currentUsername || '' };
+          this.excellentSubmissions.unshift(info);
+        }
+      },
+      error: (err: any) => {
+        console.error('提交优秀作业失败', err);
+        alert('提交失败，请稍后重试或联系教师');
+      }
+    });
   }
 
   loadMachines(): void {

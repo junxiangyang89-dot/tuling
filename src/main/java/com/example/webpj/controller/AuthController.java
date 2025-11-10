@@ -45,6 +45,15 @@ public class AuthController {
         System.out.println("username: "+loginDTO.getUsername()+ "  token: " + token);
         Map<String, String> data = new HashMap<>();
         data.put("token", token);
+        // 从数据库中读取用户并返回角色信息，后端为权限校验的最终依据
+        try {
+            User user = userService.findByUsername(loginDTO.getUsername());
+            if (user != null && user.getRole() != null) {
+                data.put("role", user.getRole());
+            }
+        } catch (Exception e) {
+            log.warn("获取用户角色信息失败: {}", e.getMessage());
+        }
         return Result.success(data);
         } catch (BadCredentialsException e) {
 //        logger.error("登录失败: 用户名或密码错误", e);

@@ -45,8 +45,18 @@
         <div class="machine-description">{{ machine.description || '无描述' }}</div>
         <div class="machine-time">创建时间: {{ machine.createTime | date:'yyyy-MM-dd HH:mm' }}</div>
         <button class="delete-button" (click)="deleteMachine(machine.id, $event)">删除</button>
+        <!-- 学生可将单台图灵机提交为优秀作业 -->
+        <button *ngIf="currentUserRole === 'STUDENT'" class="submit-excellent" (click)="submitExcellentAssignment(machine); $event.stopPropagation();">提交为优秀作业</button>
       </div>
     </div>
+  </div>
+
+  <!-- 本地展示已提交的优秀作业（仅用于前端快速查看） -->
+  <div class="excellent-submissions" *ngIf="excellentSubmissions.length > 0">
+    <h3>已提交的优秀作业</h3>
+    <ul>
+      <li *ngFor="let s of excellentSubmissions">{{ s.name }} - 提交者: {{ s.username }} - {{ s.createTime | date:'yyyy-MM-dd HH:mm' }}</li>
+    </ul>
   </div>
 
   <div class="no-machines" *ngIf="machines.length === 0">

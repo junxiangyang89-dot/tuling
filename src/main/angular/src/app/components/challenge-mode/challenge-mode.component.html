@@ -32,6 +32,38 @@
       </div>
     </div>
 
+    <!-- 学生提交题目表单（可选） -->
+    <div class="submit-box" *ngIf="!isTeacher">
+      <h3>提交优秀题目（学生）</h3>
+      <div>
+        <label>题目标题</label>
+        <input [(ngModel)]="newMachine.name" placeholder="题目名称" />
+      </div>
+      <div>
+        <label>题目描述</label>
+        <textarea [(ngModel)]="newMachine.description" rows="3"></textarea>
+      </div>
+      <div>
+        <label>测试用例（JSON）</label>
+        <textarea [(ngModel)]="newMachine.testcase" rows="3" placeholder='{"input":"...","output":"..."}'></textarea>
+      </div>
+      <button (click)="submitChallenge()">提交题目（等待教师审核）</button>
+    </div>
+
+    <!-- 教师待审列表 -->
+    <div class="admin-review" *ngIf="isTeacher">
+      <h3>待审核题目</h3>
+      <div *ngIf="pendingTestCases.length === 0">暂无待审题目</div>
+      <div *ngFor="let q of pendingTestCases" class="pending-card">
+        <div class="pending-title">{{ q.title }}</div>
+        <div class="pending-desc">{{ q.description }}</div>
+        <div class="pending-actions">
+          <button (click)="approveQuestion(q)">通过并发布</button>
+          <button (click)="deleteQuestion(q)">删除</button>
+        </div>
+      </div>
+    </div>
+
   <!-- 图灵机列表 -->
   <div class="machine-list" *ngIf="machines.length > 0">
     <h2>已有图灵机</h2>

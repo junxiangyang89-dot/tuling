@@ -11,10 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import com.example.webpj.entity.User;
+import com.example.webpj.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @RestController
 @CrossOrigin(origins = {"http://localhost:4200", "http://localhost:8080"}, allowedHeaders = {"Authorization", "Content-Type", "X-User-Name"})
@@ -27,6 +30,10 @@ public class TuringMachineController {
     
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     
     // 添加缓存来存储已修复的图灵机ID，避免重复修复
     private final Set<Long> fixedMachineIds = new HashSet<>();
@@ -602,8 +609,35 @@ public class TuringMachineController {
      */
     @DeleteMapping("/{machineId}")
     public Result deleteMachine(@PathVariable Long machineId) {
+        // 服务端权限校验：只有教师角色可以执行删除
+        String username = SecurityContextHolder.getContext().getAuthentication() != null
+                ? SecurityContextHolder.getContext().getAuthentication().getName()
+                : null;
+        if (username == null) {
+            return Result.error("未认证的用户，无法执行删除操作");
+        }
+
+        User user = userService.findByUsername(username);
+        if (user == null) {
+            return Result.error("用户不存在，无法执行删除操作");
+        }
+
+        if (!"TEACHER".equalsIgnoreCase(user.getRole())) {
+            // 记录未授权尝试
+            System.out.println("用户 " + username + " 尝试执行删除但权限不足");
+            return Result.error("权限不足：仅教师可以执行删除操作");
+        }
+
         boolean deleted = turingMachineService.deleteTuringMachine(machineId);
         if (deleted) {
+            // 记录删除日志（控制台 + 数据库审计表）
+            System.out.println("教师用户 " + username + " 已删除图灵机 ID=" + machineId);
+            try {
+                jdbcTemplate.update("INSERT INTO operation_log (username, action, target_id, details, create_time) VALUES (?,?,?,?,?)",
+                        username, "DELETE_MACHINE", machineId, "教师删除图灵机", LocalDateTime.now());
+            } catch (Exception e) {
+                System.err.println("写入操作日志失败: " + e.getMessage());
+            }
             return Result.success("删除成功");
         } else {
             return Result.error("图灵机不存在或删除失败");
@@ -615,6 +649,7 @@ public class TuringMachineController {
      */
     @DeleteMapping("/{mode}/{machineId}")
     public Result deleteMachineInMode(@PathVariable String mode, @PathVariable Long machineId) {
+        // 复用 deleteMachine 的权限校验
         return deleteMachine(machineId);
     }
     

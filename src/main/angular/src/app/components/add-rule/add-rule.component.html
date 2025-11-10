@@ -50,8 +50,8 @@
           <div class="symbol-selector">
             <button class="symbol-btn" [class.active]="newRule.outputSymbol === '0'" (click)="newRule.outputSymbol = '0'">0</button>
             <button class="symbol-btn" [class.active]="newRule.outputSymbol === '1'" (click)="newRule.outputSymbol = '1'">1</button>
-            <button class="symbol-btn" [class.active]="newRule.outputSymbol === '+'" (click)="newRule.inputSymbol = '+'">+</button>
-            <button class="symbol-btn" [class.active]="newRule.outputSymbol === '*'" (click)="newRule.inputSymbol = '*'">*</button>
+            <button class="symbol-btn" [class.active]="newRule.outputSymbol === '+'" (click)="newRule.outputSymbol = '+'">+</button>
+            <button class="symbol-btn" [class.active]="newRule.outputSymbol === '*'" (click)="newRule.outputSymbol = '*'">*</button>
             <button class="symbol-btn" [class.active]="newRule.outputSymbol === ' '" (click)="newRule.outputSymbol = ' '">空格</button>
           </div>
         </div>

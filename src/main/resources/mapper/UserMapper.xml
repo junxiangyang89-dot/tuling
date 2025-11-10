@@ -11,10 +11,11 @@
         <result column="status" property="status" jdbcType="TINYINT"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="role" property="role" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id, username, password, email, phone, avatar, status, create_time, update_time
+        id, username, password, email, phone, avatar, status, create_time, update_time, role
     </sql>
 
     <select id="selectByUsername" resultMap="BaseResultMap">
@@ -33,9 +34,9 @@
 
     <insert id="insert" parameterType="com.example.webpj.entity.User" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO sys_user
-            (username, password, email, phone, avatar, status)
+            (username, password, email, phone, avatar, status, role)
         VALUES
-            (#{username}, #{password}, #{email}, #{phone}, #{avatar}, #{status})
+            (#{username}, #{password}, #{email}, #{phone}, #{avatar}, #{status}, #{role})
     </insert>
 
     <update id="resetPassword" parameterType="com.example.webpj.entity.User">

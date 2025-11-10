@@ -89,6 +89,18 @@ export class TuringMachineService {
     if (username) {
       headers = headers.set('X-User-Name', username);
     }
+    // 如果有角色，添加角色头，后端可用作快速判断（服务端仍以数据库为准）
+    try {
+      const currentUserInfo = sessionStorage.getItem('currentUserInfo');
+      if (currentUserInfo) {
+        const info = JSON.parse(currentUserInfo as string);
+        if (info && info.role) {
+          headers = headers.set('X-User-Role', info.role);
+        }
+      }
+    } catch (e) {
+      console.error('解析currentUserInfo失败', e);
+    }
     
     // 如果有令牌，添加授权头
     if (token) {
@@ -206,6 +218,38 @@ export class TuringMachineService {
     const headers = this.getHeaders();
     return this.http.post<any>(`${this.apiUrl}/${mode}/${machineId}/step`, {}, { headers });
   }
+
+  // ========= Challenge question APIs =========
+  // 获取已审批通过的题目（学生/游客）
+  getChallengeQuestions(): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get<any>(`${environment.apiUrl}/challenge/questions`, { headers });
+  }
+
+  // 教师获取所有题目（含 PENDING）
+  getAllChallengeQuestionsForAdmin(): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get<any>(`${environment.apiUrl}/challenge/admin/questions`, { headers });
+  }
+
+  // 学生提交题目
+  submitChallengeQuestion(payload: any): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.post<any>(`${environment.apiUrl}/challenge/submit`, payload, { headers });
+  }
+
+  // 教师审批通过
+  approveChallengeQuestion(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.put<any>(`${environment.apiUrl}/challenge/${id}/approve`, {}, { headers });
+  }
+
+  // 教师删除题目
+  deleteChallengeQuestion(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.delete<any>(`${environment.apiUrl}/challenge/${id}`, { headers });
+  }
+
   
   // 执行完整运行（兼容旧接口）
   executeAll(machineId: number): Observable<any> {

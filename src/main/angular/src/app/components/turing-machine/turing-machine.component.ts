@@ -82,6 +82,8 @@ export class TuringMachineComponent implements OnInit {
   testCases:any = null;
   showTestDialog:boolean = false;
   challengeDescription:string = "";
+  // 控制帮助弹窗显示
+  showHelp: boolean = false;
 
   // 图灵机管理器功能
   machines: TuringMachineInfo[] = [];
@@ -379,8 +381,8 @@ export class TuringMachineComponent implements OnInit {
         console.log("writing")
       }
 
-      // 获取移动方向（优先使用moveDirection，向后兼容direction）
-      const moveDirection = matchingRule.moveDirection;// || matchingRule.direction
+      // 获取移动方向，确保即使moveDirection未定义时也有默认值'S'
+      const moveDirection = matchingRule.moveDirection || 'S';
 
       // 移动读写头
       if (moveDirection === 'L') {
@@ -427,8 +429,8 @@ export class TuringMachineComponent implements OnInit {
         this.tape.write(matchingRule.outputSymbol);
       }
 
-      // 获取移动方向（优先使用moveDirection，向后兼容direction）
-      const moveDirection = matchingRule.moveDirection;// || matchingRule.direction
+      // 获取移动方向，确保即使moveDirection未定义时也有默认值'S'
+      const moveDirection = matchingRule.moveDirection || 'S';
 
       // 移动读写头
       if (moveDirection === 'L') {
@@ -1008,7 +1010,12 @@ export class TuringMachineComponent implements OnInit {
   }
   
   navigateToHelp(): void {
+    // 保留原有的外部用户手册入口
     window.open('https://ycnic6uum7sg.feishu.cn/wiki/NfScwvBLmivPbykeeQQc7ifhnnc?from=from_copylink', '_blank'); 
+  }
+
+  toggleHelp(): void {
+    this.showHelp = !this.showHelp;
   }
 
   // 返回登录界面（不清除登录信息）

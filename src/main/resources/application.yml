@@ -1,8 +1,10 @@
 ai:
-  endpoint: https://api.your-model-provider.com/v1/chat/completions
-  api-key: YOUR_MODEL_PROVIDER_API_KEY
+  endpoint: https://open.bigmodel.cn/api/paas/v4/chat/completions   # 智谱 Chat Completions
+  api-key: 2095c93c612f456b8085e1f22b19cf17.CyeDxgUOSQu8SJJJ
+
 server:
   port: 8080
+
 spring:
   main:
     allow-bean-definition-overriding: true

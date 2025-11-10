@@ -16,7 +16,8 @@
           <app-chat-assistant></app-chat-assistant>
         </div>
       </div>
-      <button class="help-button" (click)="navigateToHelp()">用户手册</button>
+  <button class="help-button" (click)="navigateToHelp()">用户手册</button>
+  <button class="help-button" (click)="toggleHelp()">帮助</button>
     </div>
 
     <div class="center">
@@ -106,7 +107,8 @@
         <h3>添加规则</h3>
         <app-add-rule
           [availableStates]="availableStates"
-          (addRule)="onAddRule($event)">
+          (addRule)="onAddRule($event)"
+          (addCustomState)="onAddState($event)">
         </app-add-rule>
       </div>
     </div>
@@ -142,7 +144,10 @@
   <div class="sidebar" [class.active]="showSidebar">
     <div class="sidebar-header">
       <h3>图灵机管理</h3>
-      <button class="create-button" (click)="toggleCreateForm()">新建图灵机</button>
+      <div>
+        <button class="create-button" (click)="toggleCreateForm()">新建图灵机</button>
+        <button class="close-button" (click)="toggleSidebar()" title="关闭菜单">✕</button>
+      </div>
     </div>
 
     <!-- 图灵机列表 -->
@@ -189,42 +194,49 @@
     </div>
   </div>
 
-  <!-- 教程说明 -->
-  <div class="tutorial-section">
-    <div class="tutorial-grid">
-      <!-- Column 1: Try it out -->
-      <div class="tutorial-column">
-        <h3>试着运行图灵机</h3>
-        <p><strong>运行</strong>运行机器以查看其实际行为。您可以随时<strong>单步</strong>或<strong>暂停</strong>，或<strong>重置</strong>以重新开始。</p>
-        <p><strong>左移/右移</strong>向左向右移动一个单元格。</p>
-        <p><strong>0 </strong> <strong>1 </strong> <strong>write </strong>选中纸带的某一个格，点击0或1，再点击write，写入您想要的数字。</p>
-        <p>可以<strong>手动</strong>输入序列，也可以<strong>点击纸带</strong>修改某一格的数字</p>
-        <h3>试着聊天</h3>
-        <p>可以和其他小伙伴快乐的交流</p>
-        <h3>转换规则</h3>
-        <p>点击<strong>下拉框</strong>查看可选规则</p>
-        <p>点击按钮增加/删除规则</p>
-        <h3>添加规则</h3>
-        <p>自定义您的新规则，加入当前规则集！</p>
-      </div>
+      <!-- 教程已移入“帮助”弹窗，页面底部区域已移除以释放空间 -->
+      <div class="chat-overlay help" *ngIf="showHelp" (click)="toggleHelp()"
+           (keydown.escape)="toggleHelp()" tabindex="0" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+        <div class="chat-dialog help-dialog" (click)="$event.stopPropagation()">
+          <div class="chat-header">
+            <h3 id="helpTitle">帮助</h3>
+            <button class="close-btn" (click)="toggleHelp()" aria-label="关闭 帮助">✕</button>
+          </div>
+          <div class="help-content">
+            <div class="tutorial-grid">
+              <div class="tutorial-column">
+                <h3>试着运行图灵机</h3>
+                <p><strong>运行</strong>运行机器以查看其实际行为。您可以随时<strong>单步</strong>或<strong>暂停</strong>，或<strong>重置</strong>以重新开始。</p>
+                <p><strong>左移/右移</strong>向左向右移动一个单元格。</p>
+                <p><strong>0 </strong> <strong>1 </strong> <strong>write </strong>选中纸带的某一个格，点击0或1，再点击write，写入您想要的数字。</p>
+                <p>可以<strong>手动</strong>输入序列，也可以<strong>点击纸带</strong>修改某一格的数字</p>
+                <h3>试着聊天</h3>
+                <p>可以和其他小伙伴快乐的交流</p>
+                <h3>转换规则</h3>
+                <p>点击<strong>下拉框</strong>查看可选规则</p>
+                <p>点击按钮增加/删除规则</p>
+                <h3>添加规则</h3>
+                <p>自定义您的新规则，加入当前规则集！</p>
+              </div>
 
-      <!-- Column 2: Make your own -->
-      <div *ngIf="currentMode !== 'learning-mode'" class="tutorial-column">
-        <h3>制作您自己的图灵机</h3>
-        <p>点击<strong>图灵机列表</strong>，点击<strong>新建图灵机</strong></p>
-        <p>在转换规则点击<strong>新建</strong>创建新的规则集</p>
-        <p>在添加规则中添加您想要的规则</p>
-        <ul>
-          <li>可行的读入：0,1, </li>
-          <li>可行的写入：0,1, </li>
-          <li>勾选启用写入，写入所选写符号</li>
-          <li>可行的移动方向：左移，不动，右移 </li>
-        </ul>
-        <p><strong>注意不要添加冲突的规则！！！</strong></p>
-        <p><strong>记得点击保存，保存您新建的图灵机规则</strong></p>
+              <div *ngIf="currentMode !== 'learning-mode'" class="tutorial-column">
+                <h3>制作您自己的图灵机</h3>
+                <p>点击<strong>图灵机列表</strong>，点击<strong>新建图灵机</strong></p>
+                <p>在转换规则点击<strong>新建</strong>创建新的规则集</p>
+                <p>在添加规则中添加您想要的规则</p>
+                <ul>
+                  <li>可行的读入：0,1, </li>
+                  <li>可行的写入：0,1, </li>
+                  <li>勾选启用写入，写入所选写符号</li>
+                  <li>可行的移动方向：左移，不动，右移 </li>
+                </ul>
+                <p><strong>注意不要添加冲突的规则！！！</strong></p>
+                <p><strong>记得点击保存，保存您新建的图灵机规则</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
   <!-- 挑战模式测试功能 -->
   <div *ngIf="currentMode === 'challenge-mode'" class="challenge-test">

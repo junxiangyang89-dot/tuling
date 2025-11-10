@@ -1,5 +1,6 @@
 # 构建阶段
-FROM node:18-alpine AS builder
+# 使用非-alpine 的官方 node 镜像，减少拉取 metadata 失败的概率（更稳定的层元数据）
+FROM node:18-bullseye-slim AS builder
 
 WORKDIR /app
 
@@ -19,7 +20,8 @@ COPY src/main/angular/ ./
 RUN npm run build
 
 # 生产阶段
-FROM nginx:alpine
+# 使用 nginx 的 stable-alpine 标签，显式指定稳定通道
+FROM nginx:1.24-alpine
 
 # 复制构建产物
 COPY --from=builder /app/dist/angular/browser /usr/share/nginx/html

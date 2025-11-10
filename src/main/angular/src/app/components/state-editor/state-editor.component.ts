@@ -254,7 +254,8 @@ export class StateEditorComponent implements AfterViewInit {
         const midY = (sourceNode.y! + targetNode.y!) / 2;
         return `translate(${midX},${midY})`;
       })
-      .text((d: any) => `${d.rule.inputSymbol}/${d.rule.outputSymbol? d.rule.outputSymbol:'' },${d.rule.moveDirection? d.rule.moveDirection :''}`);
+      // 修改逻辑以确保outputSymbol即使为空字符串或空格也能正确显示
+        .text((d: any) => `${d.rule.inputSymbol}/${d.rule.outputSymbol === undefined ? '' : d.rule.outputSymbol },${d.rule.moveDirection? d.rule.moveDirection :''}`);
 
       // 绘制节点
       const node = this.svg.selectAll('.node')
@@ -365,13 +366,34 @@ export class StateEditorComponent implements AfterViewInit {
       const outputSymbol = prompt(`请输入写入符号：`, inputSymbol || '');
       const direction = prompt(`请输入方向（L/R/S）：`, 'R');
 
+      // 验证输入符号和输出符号
+      const validSymbols = ['0', '1', ' ', '+', '*'];
       if (inputSymbol && outputSymbol && direction) {
+        // 输入符号验证
+        if (!validSymbols.includes(inputSymbol)) {
+          alert('读符号必须是 0、1、+、*或 空格');
+          return;
+        }
+        // 输出符号验证
+        if (!validSymbols.includes(outputSymbol)) {
+          alert('写符号必须是 0、1、+、*或 空格');
+          return;
+        }
+        // 方向验证
+        const validDirections = ['L', 'R', 'S'];
+        const normalizedDirection = direction.toUpperCase();
+        if (!validDirections.includes(normalizedDirection)) {
+          alert('方向必须是 L、R 或 S');
+          return;
+        }
+
         const newRule: TransitionRule = {
           currentState: this.draggedSourceNode.id,
           inputSymbol,
           outputSymbol,
-          moveDirection: direction.toUpperCase() as 'L' | 'R' | 'S',
-          nextState: targetNode.id
+          moveDirection: normalizedDirection as 'L' | 'R' | 'S',
+          nextState: targetNode.id,
+          iswrite: true // 添加iswrite属性，默认为true
         };
         this.addRule.emit(newRule);
       }
@@ -411,23 +433,51 @@ export class StateEditorComponent implements AfterViewInit {
       const to = node.id;
 
       // 弹出对话框获取 path 和 label
-      const inputSymbol = prompt(`输入 input symbol 从 ${from} 到 ${to}`) || '';
-      const writeSymbol = prompt(`输入 out symbol 从 ${from} 到 ${to}`) || '';
-      const direction = prompt(`输入方向 (L/R/S)`) || 'R';
+      const inputSymbol = prompt(`输入 input symbol 从 ${from} 到 ${to}`);
+      const writeSymbol = prompt(`输入 out symbol 从 ${from} 到 ${to}`);
+      const direction = prompt(`输入方向 (L/R/S)`);
 
-      const newRule: TransitionRule = {
-        currentState: from,
-        nextState: to,
-        inputSymbol: inputSymbol,
-        outputSymbol: writeSymbol,
-        moveDirection: direction.toUpperCase() === 'L' ? 'L' : 'R'
-      };
-      this.transitionRules = [...this.transitionRules, newRule];
-      this.addRule.emit(newRule); // 通知父组件添加
-      this.addTransitionMode = false;
-      this.transitionStartNode = null;
-      alert('连接已添加');
-      this.updateGraph();
+      // 验证输入符号和输出符号
+      const validSymbols = ['0', '1', ' ', '+', '*'];
+      if (inputSymbol && writeSymbol && direction) {
+        // 输入符号验证
+        if (!validSymbols.includes(inputSymbol)) {
+          alert('读符号必须是 0、1、+、*或 空格');
+          return;
+        }
+        // 输出符号验证
+        if (!validSymbols.includes(writeSymbol)) {
+          alert('写符号必须是 0、1、+、*或 空格');
+          return;
+        }
+        // 方向验证
+        const validDirections = ['L', 'R', 'S'];
+        const normalizedDirection = direction.toUpperCase();
+        if (!validDirections.includes(normalizedDirection)) {
+          alert('方向必须是 L、R 或 S');
+          return;
+        }
+
+        const newRule: TransitionRule = {
+          currentState: from,
+          nextState: to,
+          inputSymbol: inputSymbol,
+          outputSymbol: writeSymbol,
+          moveDirection: normalizedDirection as 'L' | 'R' | 'S',
+          iswrite: true // 添加iswrite属性，默认为true
+        };
+        this.transitionRules = [...this.transitionRules, newRule];
+        this.addRule.emit(newRule); // 通知父组件添加
+        this.addTransitionMode = false;
+        this.transitionStartNode = null;
+        alert('连接已添加');
+        this.updateGraph();
+      } else {
+        // 输入不完整，取消操作
+        this.addTransitionMode = false;
+        this.transitionStartNode = null;
+        alert('输入不完整，连接创建已取消');
+      }
     }
   }
 
