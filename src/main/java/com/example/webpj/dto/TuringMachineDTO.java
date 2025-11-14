@@ -6,6 +6,8 @@ import java.util.List;
 
 @Data
 public class TuringMachineDTO {
+    private String name;          // 图灵机名称
+    private String description;   // 图灵机描述
     private String tape;          // 纸带内容
     private Integer headPosition; // 读写头位置
     private String currentState;  // 当前状态

@@ -11,6 +11,7 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
 import { FreeModeComponent } from './components/free-mode/free-mode.component';
 import { LearningModeComponent } from './components/learning-mode/learning-mode.component';
 import { ChallengeModeComponent } from './components/challenge-mode/challenge-mode.component';
+import { AssignmentReviewComponent } from './components/assignment-review/assignment-review.component';
 import { StateEditorComponent } from './components/state-editor/state-editor.component';
 import { ChatAssistantComponent } from './components/chat-assistant/chat-assistant.component';
 
@@ -28,6 +29,7 @@ import { ChatAssistantComponent } from './components/chat-assistant/chat-assista
     FreeModeComponent,
     LearningModeComponent,
     ChallengeModeComponent,
+    AssignmentReviewComponent,
     MachinePageComponent,
     StateEditorComponent,
     ChatAssistantComponent

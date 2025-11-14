@@ -605,6 +605,48 @@ public class TuringMachineController {
     }
     
     /**
+     * 重命名图灵机（兼容旧接口）
+     */
+    @PutMapping("/{machineId}/rename")
+    public Result renameMachine(@PathVariable Long machineId, @RequestBody Map<String, Object> renameData) {
+        return renameMachineInMode(null, machineId, renameData);
+    }
+    
+    /**
+     * 在特定模式下重命名图灵机
+     */
+    @PutMapping("/{mode}/{machineId}/rename")
+    public Result renameMachineInMode(@PathVariable String mode, @PathVariable Long machineId, @RequestBody Map<String, Object> renameData) {
+        TuringMachine existingMachine = turingMachineService.getTuringMachineById(machineId);
+        if (existingMachine == null) {
+            return Result.error("图灵机不存在");
+        }
+        
+        try {
+            // 更新名称和描述
+            TuringMachineDTO dto = new TuringMachineDTO();
+            
+            if (renameData.containsKey("name")) {
+                dto.setName(renameData.get("name").toString());
+            }
+            
+            if (renameData.containsKey("description")) {
+                dto.setDescription(renameData.get("description").toString());
+            }
+            
+            // 更新数据库
+            TuringMachine updated = turingMachineService.updateTuringMachine(machineId, dto);
+            if (updated != null) {
+                return Result.success("重命名成功");
+            } else {
+                return Result.error("重命名失败");
+            }
+        } catch (Exception e) {
+            return Result.error("重命名图灵机失败: " + e.getMessage());
+        }
+    }
+    
+    /**
      * 删除图灵机（兼容旧接口）
      */
     @DeleteMapping("/{machineId}")
@@ -812,4 +854,4 @@ public class TuringMachineController {
         // 默认为自由模式
         return "free-mode";
     }
-} 
+}

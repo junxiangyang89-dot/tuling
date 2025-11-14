@@ -37,6 +37,25 @@ SET FOREIGN_KEY_CHECKS = 0;
 --     update_time DATETIME NOT NULL
 -- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Ensure level table exists (uncommented)
+DROP TABLE IF EXISTS level;
+CREATE TABLE IF NOT EXISTS level (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    description VARCHAR(500),
+    mode_type VARCHAR(50) NOT NULL,
+    difficulty INT NOT NULL,
+    initial_state VARCHAR(255),
+    target_state VARCHAR(255),
+    hints VARCHAR(500),
+    solution TEXT,
+    order_num INT NOT NULL,
+    is_locked BOOLEAN DEFAULT TRUE,
+    create_time DATETIME NOT NULL,
+    update_time DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Create turing machine table
 DROP TABLE IF EXISTS turing_machine;
 CREATE TABLE IF NOT EXISTS turing_machine (
@@ -103,3 +122,17 @@ INSERT INTO turing_machine (user_id, name, description, tape, head_position, cur
 -- (1, 2, '{"states":["q0","q1","q2"],"transitions":[...]}', FALSE, 'Check parentheses matching logic', 2, 180000, NOW(), NOW());
 
 SET FOREIGN_KEY_CHECKS = 1; 
+
+-- 挑战题目表（用于保存学生提交的优秀作业并供教师审核）
+DROP TABLE IF EXISTS challenge_question;
+CREATE TABLE IF NOT EXISTS challenge_question (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    testcase_json TEXT,
+    creator_user_id BIGINT,
+    creator_username VARCHAR(100),
+    status VARCHAR(20) DEFAULT 'PENDING', -- PENDING, APPROVED, REJECTED
+    create_time DATETIME NOT NULL,
+    update_time DATETIME NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

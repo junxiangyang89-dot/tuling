@@ -146,6 +146,48 @@ export class FreeModeComponent implements OnInit, AfterViewInit {
     });
   }
 
+  // 重命名相关状态
+  editingMachineId: number | null = null;
+  editingMachineName: string = '';
+  editingMachineDescription: string = '';
+
+  // 开始编辑图灵机
+  startEditMachine(machine: TuringMachineInfo, event: Event): void {
+    event.stopPropagation(); // 阻止事件冒泡
+    this.editingMachineId = machine.id;
+    this.editingMachineName = machine.name;
+    this.editingMachineDescription = machine.description || '';
+  }
+
+  // 取消编辑
+  cancelEdit(): void {
+    this.editingMachineId = null;
+    this.editingMachineName = '';
+    this.editingMachineDescription = '';
+  }
+
+  // 保存重命名
+  saveMachineRename(machineId: number, event: Event): void {
+    event.stopPropagation(); // 阻止事件冒泡
+    
+    if (!this.editingMachineName.trim()) {
+      alert('图灵机名称不能为空！');
+      return;
+    }
+
+    this.turingService.renameMachineInMode(this.mode, machineId, this.editingMachineName, this.editingMachineDescription).subscribe({
+      next: (response) => {
+        console.log('重命名成功:', response);
+        this.loadMachines(); // 重新加载列表
+        this.cancelEdit(); // 退出编辑模式
+      },
+      error: (error) => {
+        console.error('重命名失败:', error);
+        alert('重命名失败，请重试！');
+      }
+    });
+  }
+
   // 导航到图灵机页面
   navigateToTuringMachine(): void {
     this.router.navigate(['/free-mode']); // /machine

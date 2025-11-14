@@ -32,23 +32,7 @@
       </div>
     </div>
 
-    <!-- 学生提交题目表单（可选） -->
-    <div class="submit-box" *ngIf="!isTeacher">
-      <h3>提交优秀题目（学生）</h3>
-      <div>
-        <label>题目标题</label>
-        <input [(ngModel)]="newMachine.name" placeholder="题目名称" />
-      </div>
-      <div>
-        <label>题目描述</label>
-        <textarea [(ngModel)]="newMachine.description" rows="3"></textarea>
-      </div>
-      <div>
-        <label>测试用例（JSON）</label>
-        <textarea [(ngModel)]="newMachine.testcase" rows="3" placeholder='{"input":"...","output":"..."}'></textarea>
-      </div>
-      <button (click)="submitChallenge()">提交题目（等待教师审核）</button>
-    </div>
+
 
     <!-- 教师待审列表 -->
     <div class="admin-review" *ngIf="isTeacher">
@@ -69,10 +53,25 @@
     <h2>已有图灵机</h2>
     <div class="machine-grid">
       <div class="machine-card" *ngFor="let machine of machines" (click)="selectMachine(machine)">
-        <div class="machine-name">{{ machine.name }}</div>
-        <div class="machine-description">{{ machine.description || '无描述' }}</div>
-        <div class="machine-time">创建时间: {{ machine.createTime | date:'yyyy-MM-dd HH:mm' }}</div>
-<!--        <button class="delete-button" (click)="deleteMachine(machine.id, $event)">删除</button>-->
+        <ng-container *ngIf="editingMachineId !== machine.id">
+          <div class="machine-name">{{ machine.name }}</div>
+          <div class="machine-description">{{ machine.description || '无描述' }}</div>
+          <div class="machine-time">创建时间: {{ machine.createTime | date:'yyyy-MM-dd HH:mm' }}</div>
+          <div class="machine-actions">
+            <button class="rename-button" (click)="startEditMachine(machine, $event)">重命名</button>
+            <button class="delete-button" (click)="deleteMachine(machine.id, $event)">删除</button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="editingMachineId === machine.id">
+          <div class="machine-edit" (click)="$event.stopPropagation()">
+            <input type="text" [(ngModel)]="editingMachineName" placeholder="图灵机名称" class="edit-input" (click)="$event.stopPropagation()" />
+            <textarea [(ngModel)]="editingMachineDescription" placeholder="描述（可选）" class="edit-textarea" (click)="$event.stopPropagation()"></textarea>
+          <div class="edit-actions">
+              <button class="save-button" (click)="saveMachineRename(machine.id, $event)">保存</button>
+              <button class="cancel-button" (click)="cancelEdit($event)">取消</button>
+            </div>
+          </div>
+        </ng-container>
       </div>
     </div>
   </div>

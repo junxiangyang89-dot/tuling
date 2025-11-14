@@ -77,8 +77,15 @@ public class ChallengeController {
         if (!"TEACHER".equalsIgnoreCase(user.getRole())) {
             return Result.error("权限不足：仅教师可审批题目");
         }
-        questionService.updateStatus(id, "APPROVED");
-        return Result.success("已通过");
+        // 使用服务的 approveAndCreateLevel 来同时批准并创建 Level
+        try {
+            // 方法在实现类中进行了事务处理并会创建 Level
+            ((com.example.webpj.service.impl.ChallengeQuestionServiceImpl)questionService).approveAndCreateLevel(id);
+            return Result.success("已通过并发布为关卡");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.error("审批或发布失败: " + e.getMessage());
+        }
     }
 
     // 教师删除题目
@@ -95,5 +102,50 @@ public class ChallengeController {
         }
         questionService.deleteQuestion(id);
         return Result.success("删除成功");
+    }
+
+    // 教师更新作业评分和评语
+    @PutMapping("/{id}/evaluate")
+    public Result evaluateQuestion(@PathVariable Long id, @RequestBody Map<String, Object> evaluation) {
+        String username = SecurityContextHolder.getContext().getAuthentication() != null
+                ? SecurityContextHolder.getContext().getAuthentication().getName()
+                : null;
+        if (username == null) return Result.error("未认证的用户");
+        User user = userService.findByUsername(username);
+        if (user == null) return Result.error("用户不存在");
+        if (!"TEACHER".equalsIgnoreCase(user.getRole())) {
+            return Result.error("权限不足：仅教师可评估作业");
+        }
+
+        Integer score = (Integer) evaluation.get("score");
+        String comment = (String) evaluation.get("comment");
+
+        questionService.updateQuestionEvaluation(id, score, comment);
+        return Result.success("评分和评语已更新");
+    }
+
+    // 教师标记为优秀作业
+    @PutMapping("/{id}/mark-sample")
+    public Result markAsSample(@PathVariable Long id, @RequestBody Map<String, Boolean> request) {
+        String username = SecurityContextHolder.getContext().getAuthentication() != null
+                ? SecurityContextHolder.getContext().getAuthentication().getName()
+                : null;
+        if (username == null) return Result.error("未认证的用户");
+        User user = userService.findByUsername(username);
+        if (user == null) return Result.error("用户不存在");
+        if (!"TEACHER".equalsIgnoreCase(user.getRole())) {
+            return Result.error("权限不足：仅教师可标记优秀作业");
+        }
+
+        Boolean isSample = request.get("isSample");
+        questionService.updateQuestionSampleStatus(id, isSample);
+        return Result.success("优秀作业状态已更新");
+    }
+
+    // 获取所有优秀作业（已标记为范例的作业）
+    @GetMapping("/excellent-assignments")
+    public Result listExcellentAssignments() {
+        List<ChallengeQuestion> list = questionService.getExcellentAssignments();
+        return Result.success(list);
     }
 }

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.webpj.mapper.LevelMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.webpj.entity.Level">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="type" property="type" />
+        <result column="description" property="description" />
+        <result column="mode_type" property="modeType" />
+        <result column="difficulty" property="difficulty" />
+        <result column="initial_state" property="initialState" />
+        <result column="target_state" property="targetState" />
+        <result column="hints" property="hints" />
+        <result column="solution" property="solution" />
+        <result column="order_num" property="orderNum" />
+        <result column="is_locked" property="isLocked" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+    </resultMap>
+
+    <insert id="insert" parameterType="com.example.webpj.entity.Level" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO level (name, type, description, mode_type, difficulty, initial_state, target_state, hints, solution, order_num, is_locked, create_time, update_time)
+        VALUES (#{name}, #{type}, #{description}, #{modeType}, #{difficulty}, #{initialState}, #{targetState}, #{hints}, #{solution}, #{orderNum}, #{isLocked}, #{createTime}, #{updateTime})
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="long">
+        SELECT * FROM level WHERE id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT * FROM level ORDER BY create_time DESC
+    </select>
+
+</mapper>

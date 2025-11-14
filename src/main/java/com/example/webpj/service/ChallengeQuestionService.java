@@ -10,4 +10,9 @@ public interface ChallengeQuestionService {
     Long createQuestion(ChallengeQuestion question);
     void deleteQuestion(Long id);
     void updateStatus(Long id, String status);
+    
+    // 优秀作业相关方法
+    void updateQuestionEvaluation(Long id, Integer score, String comment);
+    void updateQuestionSampleStatus(Long id, Boolean isSample);
+    List<ChallengeQuestion> getExcellentAssignments();
 }

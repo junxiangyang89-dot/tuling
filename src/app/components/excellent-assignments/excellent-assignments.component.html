@@ -1,0 +1,125 @@
+<div class="container">
+  <div class="header">
+    <h1>优秀作业管理</h1>
+    <button class="logout-btn" (click)="logout()">退出登录</button>
+  </div>
+
+  <div class="content">
+    <!-- 作业列表视图 -->
+    <div class="assignment-list" *ngIf="!isDetailView">
+      <h2>学生作业列表</h2>
+      
+      <div class="filter-section">
+        <!-- 可以添加筛选功能 -->
+        <div class="filter-group">
+          <label>课程筛选:</label>
+          <select>
+            <option value="">全部课程</option>
+            <option value="course1">课程1</option>
+            <option value="course2">课程2</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>班级筛选:</label>
+          <select>
+            <option value="">全部班级</option>
+            <option value="class1">班级1</option>
+            <option value="class2">班级2</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>作业类型:</label>
+          <select>
+            <option value="">全部类型</option>
+            <option value="type1">类型1</option>
+            <option value="type2">类型2</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="loading" *ngIf="loading">加载中...</div>
+      
+      <div class="assignments-grid">
+        <div class="assignment-card" *ngFor="let assignment of assignments">
+          <div class="card-header">
+            <h3>{{ assignment.title }}</h3>
+            <div class="assignment-meta">
+              <span class="creator">{{ assignment.creatorUsername }}</span>
+              <span class="create-time">{{ assignment.createTime | date: 'yyyy-MM-dd HH:mm' }}</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="description">{{ assignment.description }}</p>
+            <div class="status-badge" [ngClass]="assignment.status.toLowerCase()">
+              {{ assignment.status }}
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="evaluation-info">
+              <span class="score" *ngIf="assignment.score">评分: {{ assignment.score }}/100</span>
+              <span class="sample-badge" *ngIf="assignment.isSample">优秀作业</span>
+            </div>
+            <button class="detail-btn" (click)="viewAssignmentDetail(assignment)">查看详情</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 作业详情视图 -->
+    <div class="assignment-detail" *ngIf="isDetailView && selectedAssignment">
+      <div class="detail-header">
+        <button class="back-btn" (click)="backToList()">返回列表</button>
+        <h2>作业详情</h2>
+      </div>
+
+      <div class="detail-content">
+        <div class="basic-info">
+          <h3>{{ selectedAssignment.title }}</h3>
+          <div class="meta-info">
+            <span class="creator">学生: {{ selectedAssignment.creatorUsername }}</span>
+            <span class="create-time">提交时间: {{ selectedAssignment.createTime | date: 'yyyy-MM-dd HH:mm' }}</span>
+            <span class="status-badge" [ngClass]="selectedAssignment.status.toLowerCase()">
+              {{ selectedAssignment.status }}
+            </span>
+          </div>
+        </div>
+
+        <div class="description-section">
+          <h4>作业描述</h4>
+          <p>{{ selectedAssignment.description }}</p>
+        </div>
+
+        <div class="testcase-section">
+          <h4>测试用例</h4>
+          <pre>{{ selectedAssignment.testcaseJson | json }}</pre>
+        </div>
+
+        <div class="evaluation-section">
+          <h4>教师评估</h4>
+          <div class="evaluation-form">
+            <div class="form-group">
+              <label>评分 (0-100):</label>
+              <input type="number" min="0" max="100" [(ngModel)]="score" />
+            </div>
+            <div class="form-group">
+              <label>评语:</label>
+              <textarea [(ngModel)]="comment" rows="5"></textarea>
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" [(ngModel)]="isSample" />
+                标记为优秀作业（用于范例展示）
+              </label>
+            </div>
+            <div class="form-actions">
+              <button class="save-btn" (click)="updateEvaluation()">保存评分和评语</button>
+              <button class="sample-btn" [ngClass]="{ 'active': isSample }" (click)="toggleSampleStatus()">
+                {{ isSample ? '取消优秀作业' : '标记为优秀作业' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

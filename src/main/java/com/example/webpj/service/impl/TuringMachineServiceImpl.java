@@ -7,9 +7,9 @@ import com.example.webpj.service.TuringMachineService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TuringMachineServiceImpl implements TuringMachineService {
@@ -50,6 +50,14 @@ public class TuringMachineServiceImpl implements TuringMachineService {
         }
         
         // 更新字段
+        if (turingMachineDTO.getName() != null) {
+            existingMachine.setName(turingMachineDTO.getName());
+        }
+        
+        if (turingMachineDTO.getDescription() != null) {
+            existingMachine.setDescription(turingMachineDTO.getDescription());
+        }
+        
         if (turingMachineDTO.getTape() != null) {
             existingMachine.setTape(turingMachineDTO.getTape());
         }
@@ -68,6 +76,20 @@ public class TuringMachineServiceImpl implements TuringMachineService {
         
         if (turingMachineDTO.getIsCompleted() != null) {
             existingMachine.setIsCompleted(turingMachineDTO.getIsCompleted());
+        }
+        
+        // 如果更新了名称，同时更新configuration中的name字段
+        if (turingMachineDTO.getName() != null) {
+            try {
+                String config = existingMachine.getConfiguration();
+                if (config != null && !config.isEmpty()) {
+                    Map<String, Object> configMap = objectMapper.readValue(config, Map.class);
+                    configMap.put("name", turingMachineDTO.getName());
+                    existingMachine.setConfiguration(objectMapper.writeValueAsString(configMap));
+                }
+            } catch (Exception e) {
+                System.err.println("更新configuration中的名称失败: " + e.getMessage());
+            }
         }
         
         // 更新时间
@@ -182,4 +204,4 @@ public class TuringMachineServiceImpl implements TuringMachineService {
         // 默认为自由模式
         return "free-mode";
     }
-} 
+}

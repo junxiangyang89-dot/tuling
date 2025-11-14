@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import {DatePipe, NgForOf, NgIf} from '@angular/common';
 import {ActivatedRoute, Router, RouterOutlet} from '@angular/router';
 import {TuringMachineInfo, TuringMachineService} from '../../services/turing-machine.service';
+import { ToastService } from '../../services/toast.service';
 import {FormsModule} from '@angular/forms';
 import { CHALLENGE_TESTCASES } from '../../data/challenge';
 @Component({
@@ -46,6 +47,7 @@ export class ChallengeModeComponent implements OnInit, AfterViewInit {
     private turingService: TuringMachineService,
     private router: Router,
     private route: ActivatedRoute
+    , private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -149,26 +151,7 @@ export class ChallengeModeComponent implements OnInit, AfterViewInit {
     });
   }
 
-  // 学生提交新题目到待审区
-  submitChallenge(): void {
-    const payload = {
-      title: this.newMachine.name || '未命名题目',
-      description: this.newMachine.description || '',
-      testcaseJson: JSON.stringify(this.newMachine.testcase || {}),
-    };
-    this.turingService.submitChallengeQuestion(payload).subscribe({
-      next: (resp) => {
-        alert('提交成功，等待教师审核');
-        this.newMachine.name = '';
-        this.newMachine.description = '';
-        this.loadChallengeQuestions();
-      },
-      error: (err) => {
-        console.error('提交题目失败', err);
-        alert('提交失败，请稍后重试');
-      }
-    });
-  }
+
 
   // 返回欢迎页面
   navigateToWelcome(): void {
@@ -227,6 +210,8 @@ export class ChallengeModeComponent implements OnInit, AfterViewInit {
 
   toggleCreateForm(): void {
     this.showCreate = !this.showCreate;
+    // 在挑战模式中禁止在侧栏直接创建
+    this.toast.show('挑战模式下无法在此创建图灵机。请切换到自由模式或在模式选择界面创建图灵机。', 'warn', 6000);
   }
 
   selectedTestTitle(): string {
@@ -272,6 +257,68 @@ export class ChallengeModeComponent implements OnInit, AfterViewInit {
       },
       error: (error) => {
         console.error('创建图灵机失败:', error);
+      }
+    });
+  }
+
+  // 重命名相关状态
+  editingMachineId: number | null = null;
+  editingMachineName: string = '';
+  editingMachineDescription: string = '';
+
+  // 开始编辑图灵机
+  startEditMachine(machine: TuringMachineInfo, event: Event): void {
+    event.stopPropagation(); // 阻止事件冒泡
+    this.editingMachineId = machine.id;
+    this.editingMachineName = machine.name;
+    this.editingMachineDescription = machine.description || '';
+  }
+
+  // 取消编辑
+  cancelEdit(event?: Event): void {
+    if (event) {
+      event.stopPropagation(); // 阻止事件冒泡
+    }
+    this.editingMachineId = null;
+    this.editingMachineName = '';
+    this.editingMachineDescription = '';
+  }
+
+  // 保存重命名
+  saveMachineRename(machineId: number, event: Event): void {
+    event.stopPropagation(); // 阻止事件冒泡
+    
+    if (!this.editingMachineName.trim()) {
+      alert('图灵机名称不能为空！');
+      return;
+    }
+
+    this.turingService.renameMachineInMode(this.mode, machineId, this.editingMachineName, this.editingMachineDescription).subscribe({
+      next: (response) => {
+        console.log('重命名成功:', response);
+        this.loadMachines(); // 重新加载列表
+        this.cancelEdit(); // 退出编辑模式
+      },
+      error: (error) => {
+        console.error('重命名失败:', error);
+        alert('重命名失败，请重试！');
+      }
+    });
+  }
+
+  // 删除图灵机
+  deleteMachine(machineId: number, event: Event): void {
+    event.stopPropagation(); // 阻止事件冒泡
+    if (!window.confirm('确定要删除该图灵机吗？')) return;
+    
+    this.turingService.deleteMachineInMode(this.mode, machineId).subscribe({
+      next: (response) => {
+        console.log('删除成功:', response);
+        this.loadMachines(); // 重新加载列表
+      },
+      error: (error) => {
+        console.error('删除失败:', error);
+        alert('删除失败，请重试！');
       }
     });
   }

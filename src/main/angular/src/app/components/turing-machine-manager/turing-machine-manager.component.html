@@ -8,7 +8,7 @@
   <div class="sidebar" [class.active]="showSidebar">
     <div class="sidebar-header">
       <h3>图灵机管理</h3>
-      <button class="create-button" (click)="toggleCreateForm()">新建图灵机</button>
+  <button class="create-button" [class.disabled]="turingService.getCurrentMode() !== 'free-mode'" (click)="onCreateButtonClicked()">新建图灵机</button>
     </div>
     
     <!-- 图灵机列表 -->
@@ -19,13 +19,28 @@
       <div *ngFor="let machine of machines" 
            class="machine-item"
            (click)="selectMachine(machine)">
-        <h4>{{ machine.name }}</h4>
-        <p *ngIf="machine.description">{{ machine.description }}</p>
-        <p *ngIf="machine.createTime">创建时间: {{ machine.createTime | date:'short' }}</p>
-        <div class="status" [class.completed]="machine.isCompleted">
-          {{ machine.isCompleted ? '已完成' : '未完成' }}
-        </div>
-        <button (click)="deleteMachine(machine.id); $event.stopPropagation()">删除</button>
+        <ng-container *ngIf="editingMachineId !== machine.id">
+          <h4>{{ machine.name }}</h4>
+          <p *ngIf="machine.description">{{ machine.description }}</p>
+          <p *ngIf="machine.createTime">创建时间: {{ machine.createTime | date:'short' }}</p>
+          <div class="status" [class.completed]="machine.isCompleted">
+            {{ machine.isCompleted ? '已完成' : '未完成' }}
+          </div>
+          <div class="machine-actions">
+            <button (click)="startEditMachine(machine, $event); $event.stopPropagation()">重命名</button>
+            <button (click)="deleteMachine(machine.id); $event.stopPropagation()">删除</button>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="editingMachineId === machine.id">
+          <div class="edit-form">
+            <input type="text" [(ngModel)]="editingMachineName" placeholder="图灵机名称" class="edit-input" />
+            <textarea [(ngModel)]="editingMachineDescription" placeholder="描述（可选）" class="edit-textarea"></textarea>
+            <div class="edit-actions">
+              <button (click)="saveMachineRename(machine.id, $event); $event.stopPropagation()">保存</button>
+              <button (click)="cancelEdit(); $event.stopPropagation()">取消</button>
+            </div>
+          </div>
+        </ng-container>
       </div>
     </div>
   </div>
@@ -52,4 +67,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>

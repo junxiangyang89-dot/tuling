@@ -19,7 +19,9 @@ import { IndexedDBService } from '../../service/indexeddb.service';
 import { TuringMachineService, TuringMachineInfo } from '../../services/turing-machine.service';
 import { ChatRoomComponent } from '../chat-room/chat-room.component';
 import { StateEditorComponent } from '../state-editor/state-editor.component';
+import { ToastService } from '../../services/toast.service';
 import { ChatAssistantComponent } from '../chat-assistant/chat-assistant.component';
+import { SharedToastComponent } from '../shared-toast/shared-toast.component';
 import { ViewChild } from '@angular/core';
 import { filter } from 'rxjs/operators';
 
@@ -41,6 +43,7 @@ import { filter } from 'rxjs/operators';
     ChatRoomComponent,
     StateEditorComponent,
     ChatAssistantComponent
+    , SharedToastComponent
   ],
   templateUrl: './turing-machine.component.html',
   styleUrls: ['./turing-machine.component.css']
@@ -110,9 +113,17 @@ export class TuringMachineComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private turingService: TuringMachineService
+    , private toast: ToastService
   ) {}
 
   async ngOnInit() {
+    // 订阅模式变更，以便动态更新 UI 和权限
+    this.turingService.currentMode$.subscribe(mode => {
+      console.log('TuringMachineComponent detected mode change:', mode);
+      this.currentMode = mode;
+      // 切换模式时刷新机器列表
+      this.loadMachines();
+    });
     // 从本地存储获取用户信息
     this.getUserInfoFromStorage();
     this.router.events
@@ -632,6 +643,16 @@ export class TuringMachineComponent implements OnInit {
     }
   }
 
+  onCreateButtonClicked(): void {
+    if (this.currentMode !== 'free-mode') {
+      // 在学习/挑战模式中给出友好 toast 提示
+      this.toast.show('该操作仅在自由模式下可用。请切换到自由模式或在模式选择界面创建图灵机。', 'info');
+      return;
+    }
+    // 自由模式允许直接打开创建表单
+    this.toggleCreateForm();
+  }
+
   createMachine(): void {
     if (!this.newMachine.name) {
       alert('请输入图灵机名称');
@@ -654,7 +675,9 @@ export class TuringMachineComponent implements OnInit {
 
     console.log('准备创建的图灵机配置:', configuration);
 
-    this.turingService.createMachine(configuration).subscribe({
+  // 使用服务中的按模式创建接口
+  const mode = this.turingService.getCurrentMode();
+  this.turingService.createMachineInMode(mode, configuration).subscribe({
       next: (response) => {
         console.log('创建成功，服务器响应:', response);
 

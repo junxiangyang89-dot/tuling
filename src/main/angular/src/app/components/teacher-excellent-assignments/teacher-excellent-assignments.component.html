@@ -1,0 +1,275 @@
+<div class="container-fluid p-0">
+  <!-- 页面头部 -->
+  <div class="header bg-primary text-white p-4">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="mb-0">优秀作业管理</h1>
+          <p class="mb-0">查看和管理学生提交的优秀作业</p>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-secondary" (click)="navigateToWelcome()">返回</button>
+          <button class="btn btn-danger" (click)="logout()">退出登录</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mt-4">
+    <!-- 数据统计卡片 -->
+    <div class="row mb-4">
+      <div class="col-md-3 mb-3">
+        <div class="card border-left-primary shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">总提交作业数</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ assignments.length }}</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-file-alt fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card border-left-success shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">已审核作业数</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ approvedAssignmentsCount }}</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card border-left-warning shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">待审核作业数</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ pendingAssignmentsCount }}</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-hourglass-half fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div class="card border-left-info shadow h-100 py-2">
+          <div class="card-body">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">优秀作业数</div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">{{ sampleAssignmentsCount }}</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-star fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 筛选区域 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">作业筛选</h6>
+      </div>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <label for="statusFilter" class="form-label">作业状态</label>
+            <select id="statusFilter" class="form-select" [(ngModel)]="filters.status" (change)="applyFilters()">
+              <option value="ALL">全部状态</option>
+              <option value="PENDING">待审核</option>
+              <option value="APPROVED">已审核</option>
+              <option value="REJECTED">已拒绝</option>
+            </select>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="searchKeyword" class="form-label">关键词搜索</label>
+            <input 
+              type="text" 
+              id="searchKeyword" 
+              class="form-control" 
+              placeholder="搜索题目、描述或学生姓名" 
+              [(ngModel)]="filters.searchKeyword"
+              (input)="applyFilters()"
+            >
+          </div>
+          <div class="col-md-3 mb-3 d-flex align-items-end">
+            <button class="btn btn-secondary w-100" (click)="resetFilters()">重置筛选</button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-3 mb-3">
+            <label for="sortBy" class="form-label">排序方式</label>
+            <select id="sortBy" class="form-select" [(ngModel)]="filters.sortBy" (change)="applyFilters()">
+              <option value="createTime">提交时间</option>
+              <option value="score">评分</option>
+            </select>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="sortOrder" class="form-label">排序顺序</label>
+            <select id="sortOrder" class="form-select" [(ngModel)]="filters.sortOrder" (change)="applyFilters()">
+              <option value="desc">降序</option>
+              <option value="asc">升序</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 作业列表 -->
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">优秀作业列表</h6>
+      </div>
+      <div class="card-body">
+        <div *ngIf="isLoading" class="text-center py-4">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2">加载中...</p>
+        </div>
+        <div *ngIf="!isLoading && filteredAssignments.length === 0" class="text-center py-4">
+          <i class="fas fa-inbox fa-5x text-gray-300 mb-3"></i>
+          <p class="text-gray-500">暂无优秀作业</p>
+        </div>
+        <div *ngIf="!isLoading && filteredAssignments.length > 0" class="table-responsive">
+          <table class="table table-bordered" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                <th>题目</th>
+                <th>提交学生</th>
+                <th>提交时间</th>
+                <th>状态</th>
+                <th>评分</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let assignment of filteredAssignments">
+                <td>{{ assignment.title }}</td>
+                <td>{{ assignment.creatorUsername }}</td>
+                <td>{{ assignment.createTime }}</td>
+                <td>
+                  <span class="badge" [ngClass]="{
+                    'bg-warning': assignment.status === 'PENDING',
+                    'bg-success': assignment.status === 'APPROVED',
+                    'bg-danger': assignment.status === 'REJECTED'
+                  }">
+                    {{ assignment.status === 'PENDING' ? '待审核' : assignment.status === 'APPROVED' ? '已审核' : '已拒绝' }}
+                  </span>
+                </td>
+                <td>{{ assignment.score ? assignment.score : '-' }}</td>
+                <td>
+                  <button class="btn btn-primary btn-sm me-1" (click)="viewAssignmentDetails(assignment)">
+                    <i class="fas fa-eye"></i> 查看
+                  </button>
+                  <button class="btn btn-success btn-sm me-1" (click)="downloadAssignment(assignment)">
+                    <i class="fas fa-download"></i> 下载
+                  </button>
+                  <button *ngIf="assignment.isSample" class="btn btn-info btn-sm">
+                    <i class="fas fa-star"></i> 优秀
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 作业详情模态框 -->
+  <div *ngIf="selectedAssignment" class="fixed inset-0 bg-black bg-opacity-50 d-flex justify-content-center align-items-center z-50">
+    <div class="bg-white rounded-lg shadow-lg w-11/12 max-w-6xl max-h-[90vh] overflow-y-auto">
+      <div class="bg-primary text-white p-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">{{ currentSelectedAssignment.title }}</h5>
+          <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeDetails()"></button>
+        </div>
+      </div>
+      <div class="p-4">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="font-weight-bold">基本信息</h6>
+            <div class="mb-3">
+              <label class="form-label">提交学生:</label>
+              <span class="form-control-plaintext">{{ currentSelectedAssignment.creatorUsername }}</span>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">提交时间:</label>
+              <span class="form-control-plaintext">{{ currentSelectedAssignment.createTime }}</span>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">状态:</label>
+              <span class="badge" [ngClass]="{
+                'bg-warning': currentSelectedAssignment.status === 'PENDING',
+                'bg-success': currentSelectedAssignment.status === 'APPROVED',
+                'bg-danger': currentSelectedAssignment.status === 'REJECTED'
+              }">
+                {{ currentSelectedAssignment.status === 'PENDING' ? '待审核' : currentSelectedAssignment.status === 'APPROVED' ? '已审核' : '已拒绝' }}
+              </span>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">题目描述:</label>
+              <div class="form-control-plaintext bg-light p-3 rounded">
+                {{ currentSelectedAssignment.description }}
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h6 class="font-weight-bold">作业内容</h6>
+            <div class="mb-3">
+              <label class="form-label">测试用例 JSON:</label>
+              <pre class="bg-light p-3 rounded overflow-auto" style="max-height: 300px;">{{ formatTestcaseJson(currentSelectedAssignment.testcaseJson) }}</pre>
+            </div>
+          </div>
+        </div>
+        
+        <hr>
+        
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="font-weight-bold">作业评估</h6>
+            <div class="mb-3">
+              <label class="form-label">评分 (0-100):</label>
+              <input type="number" class="form-control" min="0" max="100" [(ngModel)]="evaluation.score">
+            </div>
+            <div class="mb-3">
+              <label class="form-label">评语:</label>
+              <textarea class="form-control" rows="4" [(ngModel)]="evaluation.comment" placeholder="请输入评语..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-light p-4 border-top d-flex justify-content-end gap-2">
+            <button type="button" class="btn btn-secondary" (click)="closeDetails()">关闭</button>
+            <button type="button" class="btn btn-primary" (click)="saveCurrentAssignmentEvaluation()">
+              <i class="fas fa-save"></i> 保存评分和评语
+            </button>
+            <button type="button" class="btn btn-info" (click)="markCurrentAssignmentAsExcellent()">
+              <i class="fas fa-star"></i> 标记为优秀作业
+            </button>
+            <button type="button" class="btn btn-success" (click)="setCurrentAssignmentAsSample()">
+              <i class="fas fa-award"></i> 设置为范例
+            </button>
+          </div>
+      </div>
+    </div>
+
+
+
+  <!-- 提示组件 -->
+  <app-shared-toast></app-shared-toast>
+</div>

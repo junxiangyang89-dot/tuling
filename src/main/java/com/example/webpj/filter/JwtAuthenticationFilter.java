@@ -35,13 +35,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String path = request.getRequestURI();
-        // 排除注册接口和登录接口
-        if (path.startsWith("/api/auth/register") || path.startsWith("/api/auth/login")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         try {
             String header = request.getHeader(jwtUtil.getTokenHeader());
             if (StringUtils.isNotEmpty(header) && header.startsWith(jwtUtil.getTokenPrefix())) {

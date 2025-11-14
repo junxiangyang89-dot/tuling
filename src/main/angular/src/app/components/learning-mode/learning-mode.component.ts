@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { TuringMachineComponent } from '../turing-machine/turing-machine.component';
 import { TuringMachineService, TuringMachineInfo } from '../../services/turing-machine.service';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../services/toast.service';
+import { SharedToastComponent } from '../shared-toast/shared-toast.component';
 
 @Component({
   selector: 'app-learning-mode',
@@ -12,7 +14,8 @@ import { FormsModule } from '@angular/forms';
     // TuringMachineComponent,
     CommonModule,
     FormsModule,
-    RouterOutlet
+    RouterOutlet,
+    SharedToastComponent
   ],
   templateUrl: './learning-mode.component.html',
   styleUrl: './learning-mode.component.css',
@@ -43,6 +46,7 @@ export class LearningModeComponent implements OnInit, AfterViewInit {
     private turingService: TuringMachineService,
     private router: Router,
     private route: ActivatedRoute
+    , private toast: ToastService
   ) {}
 
   ngOnInit(): void {
@@ -95,24 +99,54 @@ export class LearningModeComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    const payload: any = { ...machine };
-    // 标记为优秀作业来源
-    payload.title = payload.name || '优秀作业';
-    payload.isExcellentSubmission = true;
+    // 先获取图灵机的完整配置信息
+    this.turingService.getMachineInMode(this.mode, machine.id).subscribe({
+      next: (fullMachineData: any) => {
+        // 正确解析后端返回的Result结构
+        const machineConfig = fullMachineData.code === 200 && fullMachineData.data ? fullMachineData.data : null;
+        if (!machineConfig) {
+          this.toast.show('获取图灵机配置失败', 'error', 5000);
+          return;
+        }
+        
+        try {
+          // 确保配置是有效的JSON
+          const serializedConfig = JSON.stringify(machineConfig);
+          console.log('序列化后的图灵机配置:', serializedConfig.substring(0, 100) + '...'); // 只显示前100个字符
+          
+          // 构造提交到挑战题库的 payload（后端的 ChallengeQuestion 实体）
+          const payload: any = {
+            title: machine.name || '优秀作业',
+            description: machine.description || '',
+            testcaseJson: serializedConfig // 包含完整的图灵机配置
+          };
 
-    this.turingService.createMachineInMode('challenge-mode', payload).subscribe({
-      next: (res: any) => {
-        alert('优秀作业提交成功，已发送给教师审阅');
-        // 将提交加入本地展示列表（如果服务器返回了新 id，可使用）
-        if (res && res.data) {
-          const newId = res.data;
-          const info: TuringMachineInfo = { id: newId, name: payload.title, description: payload.description || '', createTime: new Date().toISOString(), mode: 'challenge-mode', username: this.currentUsername || '' };
-          this.excellentSubmissions.unshift(info);
+          // 调用后端挑战题提交接口（进入 PENDING，教师可审阅）
+          this.turingService.submitChallengeQuestion(payload).subscribe({
+            next: (res: any) => {
+              this.toast.show('优秀作业已提交，等待教师审核', 'success', 5000);
+              if (res && res.data && res.data.id) {
+                const newId = res.data.id;
+                const info: TuringMachineInfo = { id: newId, name: payload.title, description: payload.description || '', createTime: new Date().toISOString(), mode: 'challenge-mode', username: this.currentUsername || '' };
+                this.excellentSubmissions.unshift(info);
+              }
+            },
+            error: (err: any) => {
+              console.error('提交优秀作业失败', err);
+              console.error('错误详情:', err.error);
+              console.error('请求payload:', payload);
+              this.toast.show('提交失败，请稍后重试或联系教师', 'error', 6000);
+            }
+          });
+        } catch (e) {
+          console.error('图灵机配置序列化失败:', e);
+          this.toast.show('图灵机配置序列化失败，请检查配置', 'error', 5000);
         }
       },
       error: (err: any) => {
-        console.error('提交优秀作业失败', err);
-        alert('提交失败，请稍后重试或联系教师');
+        console.error('获取图灵机完整信息失败', err);
+        console.error('错误详情:', err.error);
+        this.toast.show('获取图灵机信息失败，请重试', 'error', 5000);
       }
     });
   }
@@ -140,6 +174,7 @@ export class LearningModeComponent implements OnInit, AfterViewInit {
   }
 
   toggleCreateForm(): void {
+    // 学习模式首页允许创建图灵机：切换创建表单显示
     this.showCreate = !this.showCreate;
   }
 
@@ -174,17 +209,59 @@ export class LearningModeComponent implements OnInit, AfterViewInit {
   }
 
   deleteMachine(machineId: number, event: Event): void {
-    event.stopPropagation(); // 阻止事件冒泡，避免触发选择图灵机
+    event.stopPropagation(); // 阻止事件冒泡，避免触发选择机器操作
+    if (confirm('确定要删除这个图灵机吗？')) {
+      this.turingService.deleteMachineInMode(this.mode, machineId).subscribe({
+        next: (response) => {
+          console.log('删除成功:', response);
+          this.loadMachines(); // 重新加载列表
+        },
+        error: (error) => {
+          console.error('删除失败:', error);
+          alert('删除失败，请重试！');
+        }
+      });
+    }
+  }
 
-    if (!confirm('确定要删除该图灵机吗？')) return;
-    this.turingService.deleteMachineInMode(this.mode, machineId).subscribe({
-      next: (res: any) => {
-        alert('删除成功');
+  // 重命名相关状态
+  editingMachineId: number | null = null;
+  editingMachineName: string = '';
+  editingMachineDescription: string = '';
+
+  // 开始编辑图灵机
+  startEditMachine(machine: TuringMachineInfo, event: Event): void {
+    event.stopPropagation(); // 阻止事件冒泡
+    this.editingMachineId = machine.id;
+    this.editingMachineName = machine.name;
+    this.editingMachineDescription = machine.description || '';
+  }
+
+  // 取消编辑
+  cancelEdit(): void {
+    this.editingMachineId = null;
+    this.editingMachineName = '';
+    this.editingMachineDescription = '';
+  }
+
+  // 保存重命名
+  saveMachineRename(machineId: number, event: Event): void {
+    event.stopPropagation(); // 阻止事件冒泡
+    
+    if (!this.editingMachineName.trim()) {
+      alert('图灵机名称不能为空！');
+      return;
+    }
+
+    this.turingService.renameMachineInMode(this.mode, machineId, this.editingMachineName, this.editingMachineDescription).subscribe({
+      next: (response) => {
+        console.log('重命名成功:', response);
         this.loadMachines(); // 重新加载列表
+        this.cancelEdit(); // 退出编辑模式
       },
-      error: (err: any) => {
-        alert('删除失败');
-        console.error(err);
+      error: (error) => {
+        console.error('重命名失败:', error);
+        alert('重命名失败，请重试！');
       }
     });
   }

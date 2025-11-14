@@ -42,6 +42,9 @@ public class SecurityConfig {
                                 "/api/auth/register",
                                 "/api/auth/reset-password",
                                 "/error",
+                                // 允许未认证用户获取已审批题目与提交题目（游客/学生）
+                                "/api/challenge/questions",
+                                "/api/challenge/submit",
                                 "/api/mode/**",
                                 "/api/level/**",
                                 "/api/turing/**",

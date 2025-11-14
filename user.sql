@@ -13,7 +13,7 @@ CREATE TABLE `sys_user` (
                             `status` tinyint(1) DEFAULT '1' COMMENT '状态 0-禁用 1-正常',
                             `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
                             `update_time` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-                                                        `role` varchar(20) DEFAULT 'STUDENT' COMMENT '用户角色：STUDENT/TEACHER',
+                                                        -- duplicate `role` column removed (merged above)
                             PRIMARY KEY (`id`),
                             UNIQUE KEY `idx_username` (`username`),
                             UNIQUE KEY `idx_email` (`email`)

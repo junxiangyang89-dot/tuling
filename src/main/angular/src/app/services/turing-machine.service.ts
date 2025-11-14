@@ -250,6 +250,44 @@ export class TuringMachineService {
     return this.http.delete<any>(`${environment.apiUrl}/challenge/${id}`, { headers });
   }
 
+  // 获取待审核的优秀作业（教师端）
+  getPendingAssignments(): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get<any>(`${environment.apiUrl}/challenge/admin/questions`, { headers });
+  }
+
+  // 获取所有作业（教师端）
+  getAllAssignments(): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.get<any>(`${environment.apiUrl}/challenge/admin/questions`, { headers });
+  }
+
+  // 审批通过优秀作业
+  approveAssignment(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.put<any>(`${environment.apiUrl}/challenge/${id}/approve`, {}, { headers });
+  }
+
+  // 拒绝优秀作业
+  rejectAssignment(id: number): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.delete<any>(`${environment.apiUrl}/challenge/${id}`, { headers });
+  }
+
+  // 更新作业评分和评语
+  updateAssignmentEvaluation(id: number, score: number, comment: string): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.put<any>(`${environment.apiUrl}/challenge/${id}/evaluate`, 
+      { score, comment }, { headers });
+  }
+
+  // 更新作业优秀标记状态
+  updateAssignmentSampleStatus(id: number, isSample: boolean): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.put<any>(`${environment.apiUrl}/challenge/${id}/mark-sample`, 
+      { isSample }, { headers });
+  }
+
   
   // 执行完整运行（兼容旧接口）
   executeAll(machineId: number): Observable<any> {
@@ -349,6 +387,19 @@ export class TuringMachineService {
     return this.http.delete<any>(`${this.apiUrl}/${mode}/${machineId}`, { headers });
   }
 
+  // 重命名图灵机（兼容旧接口）
+  renameMachine(machineId: number, newName: string, newDescription?: string): Observable<any> {
+    const mode = this.getCurrentMode();
+    return this.renameMachineInMode(mode, machineId, newName, newDescription);
+  }
+
+  // 在特定模式下重命名图灵机
+  renameMachineInMode(mode: string, machineId: number, newName: string, newDescription?: string): Observable<any> {
+    const headers = this.getHeaders();
+    return this.http.put<any>(`${this.apiUrl}/${mode}/${machineId}/rename`, 
+      { name: newName, description: newDescription }, { headers });
+  }
+
   // 清理缓存和重置状态
   clearCache(): void {
     console.log('清理TuringMachineService缓存');
@@ -375,4 +426,4 @@ export class TuringMachineService {
     console.log('当前URL:', window.location.pathname);
     console.log('===============================');
   }
-} 
+}

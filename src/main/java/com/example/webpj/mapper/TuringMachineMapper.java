@@ -22,6 +22,8 @@ public interface TuringMachineMapper {
     List<TuringMachine> findAll();
 
     @Update("UPDATE turing_machine SET " +
+            "name = #{name}, " +
+            "description = #{description}, " +
             "tape = #{tape}, " +
             "head_position = #{headPosition}, " +
             "current_state = #{currentState}, " +
@@ -34,4 +36,4 @@ public interface TuringMachineMapper {
 
     @Delete("DELETE FROM turing_machine WHERE id = #{id}")
     int deleteById(Long id);
-} 
+}

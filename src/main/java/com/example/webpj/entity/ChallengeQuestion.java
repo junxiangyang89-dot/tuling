@@ -18,4 +18,9 @@ public class ChallengeQuestion {
     private String status; // PENDING / APPROVED / REJECTED
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
+    
+    // 优秀作业相关字段
+    private Integer score; // 作业评分（0-100）
+    private String comment; // 教师评语
+    private Boolean isSample; // 是否标记为优秀作业（用于范例展示）
 }

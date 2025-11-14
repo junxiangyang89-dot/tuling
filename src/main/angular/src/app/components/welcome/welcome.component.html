@@ -25,5 +25,19 @@
             <p>接受挑战，解决各种复杂问题</p>
             <button>进入</button>
         </div>
+        
+        <!-- 教师专用的作业审核页面 -->
+        <div *ngIf="isTeacher()" class="mode-card" (click)="navigateToAssignmentReview()">
+            <h2>作业审核</h2>
+            <p>审核学生提交的优秀作业</p>
+            <button>进入</button>
+        </div>
+        
+        <!-- 教师专用的优秀作业管理页面 -->
+        <div *ngIf="isTeacher()" class="mode-card" (click)="navigateToExcellentAssignments()">
+            <h2>优秀作业管理</h2>
+            <p>管理和展示学生的优秀作业</p>
+            <button>进入</button>
+        </div>
     </div>
 </div>

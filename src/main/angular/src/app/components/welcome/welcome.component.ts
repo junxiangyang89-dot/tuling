@@ -12,6 +12,7 @@ import { TuringMachineService } from '../../services/turing-machine.service';
 })
 export class WelcomeComponent implements OnInit {
   username: string = '';
+  userRole: string | null = null;
   
   constructor(private router: Router, private turingService: TuringMachineService) {}
   
@@ -26,12 +27,16 @@ export class WelcomeComponent implements OnInit {
       try {
         const userInfo = JSON.parse(userInfoStr);
         this.username = userInfo.username || '用户';
+        this.userRole = userInfo.role || null;
+        console.log('当前用户角色:', this.userRole);
       } catch (e) {
         console.error('解析用户信息失败', e);
         this.username = '用户';
+        this.userRole = null;
       }
     } else {
       this.username = '用户';
+      this.userRole = null;
     }
   }
   
@@ -108,5 +113,38 @@ export class WelcomeComponent implements OnInit {
   to_login(): void {
     // 不删除localStorage中的内容，只是导航回登录页
     this.router.navigate(['/login']);
+  }
+
+  // 导航到作业审核页面（教师专用）
+  navigateToAssignmentReview(): void {
+    console.log('导航到作业审核页面');
+    // 设置模式
+    this.turingService.setCurrentMode('assignment-review');
+    // 导航并刷新页面
+    this.router.navigate(['/assignment-review']).then(() => {
+      // 短暂延迟后刷新页面，确保路由完成
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    });
+  }
+
+  // 导航到优秀作业管理页面（教师专用）
+  navigateToExcellentAssignments(): void {
+    console.log('导航到优秀作业管理页面');
+    // 设置模式
+    this.turingService.setCurrentMode('excellent-assignments');
+    // 导航并刷新页面
+    this.router.navigate(['/teacher-excellent-assignments']).then(() => {
+      // 短暂延迟后刷新页面，确保路由完成
+      setTimeout(() => {
+        window.location.reload();
+      }, 100);
+    });
+  }
+
+  // 判断是否为教师角色
+  isTeacher(): boolean {
+    return this.userRole?.toUpperCase() === 'TEACHER';
   }
 }

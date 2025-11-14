@@ -1,0 +1,474 @@
+/* 基本样式 */
+.container-fluid {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.header {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 卡片样式 */
+.card {
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  background-color: #fff;
+  border-bottom: 1px solid #e3e6f0;
+}
+
+/* 统计卡片样式 */
+.card.border-left-primary {
+  border-left: 4px solid #4e73df;
+}
+
+.card.border-left-success {
+  border-left: 4px solid #1cc88a;
+}
+
+.card.border-left-warning {
+  border-left: 4px solid #f6c23e;
+}
+
+.card.border-left-info {
+  border-left: 4px solid #36b9cc;
+}
+
+/* 表格样式 */
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  border-bottom: 2px solid #e3e6f0;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+}
+
+.table td {
+  vertical-align: middle;
+}
+
+/* 按钮样式 */
+.btn {
+  border-radius: 4px;
+  font-size: 0.875rem;
+  padding: 0.375rem 0.75rem;
+  transition: all 0.2s ease;
+}
+
+.btn-sm {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 表单样式 */
+.form-label {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* 模态框样式 */
+.modal {
+  z-index: 1050;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-dialog {
+  max-width: 90%;
+  max-height: 90vh;
+  margin: 1.75rem auto;
+}
+
+.modal-content {
+  border-radius: 8px;
+  border: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  border-bottom: 1px solid #e3e6f0;
+}
+
+.modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-backdrop {
+  z-index: 1040;
+  opacity: 0.5;
+}
+
+/* 代码块样式 */
+pre {
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #212529;
+}
+
+/* 加载动画 */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .header {
+    padding: 1rem;
+  }
+  
+  .header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  
+  .col-md-3, .col-md-6 {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  
+  .card {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+  
+  .table {
+    font-size: 0.875rem;
+  }
+  
+  .modal-dialog {
+    max-width: 100%;
+    margin: 0.5rem;
+  }
+  
+  .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .header h1 {
+    font-size: 1.25rem;
+  }
+  
+  .table-responsive {
+    font-size: 0.75rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  .modal-footer {
+    padding: 0.75rem 1rem;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* 动画效果 */
+.fade {
+  opacity: 0;
+  transition: opacity 0.15s linear;
+}
+
+.fade.show {
+  opacity: 1;
+}
+
+/* 按钮组间距 */
+.me-1 {
+  margin-right: 0.25rem;
+}
+
+/* 文本样式 */
+.text-gray-300 {
+  color: #d1d3e2 !important;
+}
+
+.text-gray-500 {
+  color: #6c757d !important;
+}
+
+.text-gray-800 {
+  color: #5a5c69 !important;
+}
+
+/* 徽章样式 */
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35em 0.65em;
+}
+
+/* 间距辅助类 */
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.py-3 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.py-4 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.mb-0 {
+  margin-bottom: 0;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 1rem;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
+/* 对齐辅助类 */
+.text-center {
+  text-align: center;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.font-weight-bold {
+  font-weight: 700;
+}
+
+.font-weight-semibold {
+  font-weight: 600;
+}
+
+.font-weight-medium {
+  font-weight: 500;
+}
+
+/* 背景色辅助类 */
+.bg-primary {
+  background-color: #4e73df !important;
+}
+
+.bg-secondary {
+  background-color: #858796 !important;
+}
+
+.bg-success {
+  background-color: #1cc88a !important;
+}
+
+.bg-danger {
+  background-color: #e74a3b !important;
+}
+
+.bg-warning {
+  background-color: #f6c23e !important;
+}
+
+.bg-info {
+  background-color: #36b9cc !important;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+
+.bg-white {
+  background-color: #fff !important;
+}
+
+.bg-gray-100 {
+  background-color: #f8f9fa !important;
+}
+
+/* 文本颜色辅助类 */
+.text-primary {
+  color: #4e73df !important;
+}
+
+.text-secondary {
+  color: #858796 !important;
+}
+
+.text-success {
+  color: #1cc88a !important;
+}
+
+.text-danger {
+  color: #e74a3b !important;
+}
+
+.text-warning {
+  color: #f6c23e !important;
+}
+
+.text-info {
+  color: #36b9cc !important;
+}
+
+.text-light {
+  color: #f8f9fa !important;
+}
+
+.text-dark {
+  color: #5a5c69 !important;
+}
+
+/* 边框辅助类 */
+.border-left-primary {
+  border-left: 0.25rem solid #4e73df !important;
+}
+
+.border-left-success {
+  border-left: 0.25rem solid #1cc88a !important;
+}
+
+.border-left-warning {
+  border-left: 0.25rem solid #f6c23e !important;
+}
+
+.border-left-info {
+  border-left: 0.25rem solid #36b9cc !important;
+}
+
+/* 阴影辅助类 */
+.shadow {
+  box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+/* 圆角辅助类 */
+.rounded {
+  border-radius: 0.35rem !important;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem !important;
+}
+
+/* 弹性布局辅助类 */
+.d-flex {
+  display: flex !important;
+}
+
+.justify-content-between {
+  justify-content: space-between !important;
+}
+
+.justify-content-center {
+  justify-content: center !important;
+}
+
+.align-items-center {
+  align-items: center !important;
+}
+
+.align-items-end {
+  align-items: flex-end !important;
+}
+
+.flex-wrap {
+  flex-wrap: wrap !important;
+}
+
+.flex-column {
+  flex-direction: column !important;
+}
+
+/* 间隙辅助类 */
+.gap-2 {
+  gap: 0.5rem !important;
+}
+
+/* 宽度辅助类 */
+.w-100 {
+  width: 100% !important;
+}
+
+/* 溢出控制辅助类 */
+.overflow-auto {
+  overflow: auto !important;
+}
+
+/* 显示辅助类 */
+.show {
+  display: block !important;
+}

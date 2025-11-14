@@ -1,4 +1,5 @@
 <div class="turing-machine-container">
+  <app-shared-toast></app-shared-toast>
   <!-- 顶部菜单栏 -->
   <div class="top-menu">
     <div class="left-side">
@@ -145,7 +146,8 @@
     <div class="sidebar-header">
       <h3>图灵机管理</h3>
       <div>
-        <button class="create-button" (click)="toggleCreateForm()">新建图灵机</button>
+  <!-- 新建图灵机：在非自由模式下视觉上显示为禁用但仍可点击以显示提示 -->
+  <button class="create-button" [class.disabled]="currentMode !== 'free-mode'" (click)="onCreateButtonClicked()">新建图灵机</button>
         <button class="close-button" (click)="toggleSidebar()" title="关闭菜单">✕</button>
       </div>
     </div>

@@ -41,12 +41,24 @@
     <h2>已有图灵机</h2>
     <div class="machine-grid">
       <div class="machine-card" *ngFor="let machine of machines" (click)="selectMachine(machine)">
-        <div class="machine-name">{{ machine.name }}</div>
-        <div class="machine-description">{{ machine.description || '无描述' }}</div>
-        <div class="machine-time">创建时间: {{ machine.createTime | date:'yyyy-MM-dd HH:mm' }}</div>
-        <button class="delete-button" (click)="deleteMachine(machine.id, $event)">删除</button>
-        <!-- 学生可将单台图灵机提交为优秀作业 -->
-        <button *ngIf="currentUserRole === 'STUDENT'" class="submit-excellent" (click)="submitExcellentAssignment(machine); $event.stopPropagation();">提交为优秀作业</button>
+        <div *ngIf="editingMachineId !== machine.id">
+          <div class="machine-name">{{ machine.name }}</div>
+          <div class="machine-description">{{ machine.description || '无描述' }}</div>
+          <div class="machine-time">创建时间: {{ machine.createTime | date:'yyyy-MM-dd HH:mm' }}</div>
+          <div class="machine-actions">
+            <button class="edit-button" (click)="startEditMachine(machine, $event)">重命名</button>
+            <button class="delete-button" (click)="deleteMachine(machine.id, $event)">删除</button>
+            <button *ngIf="currentUserRole === 'STUDENT'" class="submit-excellent" (click)="submitExcellentAssignment(machine); $event.stopPropagation();">提交为优秀作业</button>
+          </div>
+        </div>
+        <div *ngIf="editingMachineId === machine.id" class="machine-edit" (click)="$event.stopPropagation()">
+          <input type="text" [(ngModel)]="editingMachineName" placeholder="输入新名称" class="edit-input" (click)="$event.stopPropagation()">
+          <textarea [(ngModel)]="editingMachineDescription" placeholder="输入新描述（可选）" class="edit-textarea" (click)="$event.stopPropagation()"></textarea>
+          <div class="edit-actions">
+            <button class="save-button" (click)="saveMachineRename(machine.id, $event)">保存</button>
+            <button class="cancel-button" (click)="cancelEdit(); $event.stopPropagation();">取消</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -63,6 +75,9 @@
     <p>暂无图灵机，请创建新的图灵机。</p>
   </div>
 </div>
+
+<!-- Toast host: 显示本页面的 toast 消息 -->
+<app-shared-toast></app-shared-toast>
 
 <!-- 在 router-outlet 中显示选中的图灵机 -->
 <router-outlet></router-outlet>
