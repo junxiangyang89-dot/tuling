@@ -20,14 +20,15 @@ export class UserRegisterComponent implements OnInit {
   login_data = {
     username: '',
     password: ''
-    ,role: 'STUDENT' // 前端选择：STUDENT 或 TEACHER。服务器返回的 role 为最终权威值。
+    // 登录时不再选择角色（注册时已决定）
   };
 
   register_data = {
     username: '',
     password: '',
     email: '',
-    phone: ''
+    phone: '',
+    role: 'STUDENT'
   };
 
   reset_data = {
@@ -102,8 +103,8 @@ export class UserRegisterComponent implements OnInit {
         if (response.code == 200) {
           // 存储用户信息到本地存储
           if (response.data && response.data.token) {
-            // 服务器会返回 token，并且（如果存在）返回 role；前端选择的 role 仅作展示/备选，真实权限以服务器为准
-            const serverRole = response.data.role || this.login_data.role || 'STUDENT';
+            // 服务器会返回 token，并且（如果存在）返回 role；如果后端未返回则默认为 STUDENT
+            const serverRole = response.data.role || 'STUDENT';
 
             // 创建一个包含用户所有信息的对象
             const userInfo: any = {
@@ -159,7 +160,8 @@ export class UserRegisterComponent implements OnInit {
         username: this.register_data.username,
         password: this.register_data.password,
         email: this.register_data.email,
-        phone: this.register_data.phone
+        phone: this.register_data.phone,
+        role: this.register_data.role
       }, httpOptions).subscribe({
         next: (response: any) => {
           if (response.code == 200) {
@@ -171,7 +173,8 @@ export class UserRegisterComponent implements OnInit {
               username: '',
               password: '',
               email: '',
-              phone: ''
+              phone: '',
+              role: 'STUDENT'
             };
           } else {
             window.alert(response.msg);

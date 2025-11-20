@@ -48,18 +48,10 @@
             <div class="machine-time">创建时间: {{ machine.createTime | date:'yyyy-MM-dd HH:mm' }}</div>
             <div class="machine-owner" *ngIf="machine.username">创建者: {{ machine.username }}</div>
             <div class="machine-actions">
-              <button class="edit-button" (click)="startEditMachine(machine, $event)">重命名</button>
               <button class="delete-button" (click)="deleteMachine(machine.id, $event)">删除</button>
             </div>
           </div>
-          <div *ngIf="editingMachineId === machine.id" class="machine-edit">
-            <input type="text" [(ngModel)]="editingMachineName" placeholder="输入新名称" class="edit-input" (click)="$event.stopPropagation()">
-            <textarea [(ngModel)]="editingMachineDescription" placeholder="输入新描述（可选）" class="edit-textarea" (click)="$event.stopPropagation()"></textarea>
-            <div class="edit-actions">
-              <button class="save-button" (click)="saveMachineRename(machine.id, $event)">保存</button>
-              <button class="cancel-button" (click)="cancelEdit(); $event.stopPropagation();">取消</button>
-            </div>
-          </div>
+          <!-- 已移除首页重命名入口：统一在图灵机详情页顶部提供重命名功能 -->
         </div>
     </div>
   </div>

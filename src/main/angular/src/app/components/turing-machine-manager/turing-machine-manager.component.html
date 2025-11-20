@@ -27,20 +27,10 @@
             {{ machine.isCompleted ? '已完成' : '未完成' }}
           </div>
           <div class="machine-actions">
-            <button (click)="startEditMachine(machine, $event); $event.stopPropagation()">重命名</button>
-            <button (click)="deleteMachine(machine.id); $event.stopPropagation()">删除</button>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="editingMachineId === machine.id">
-          <div class="edit-form">
-            <input type="text" [(ngModel)]="editingMachineName" placeholder="图灵机名称" class="edit-input" />
-            <textarea [(ngModel)]="editingMachineDescription" placeholder="描述（可选）" class="edit-textarea"></textarea>
-            <div class="edit-actions">
-              <button (click)="saveMachineRename(machine.id, $event); $event.stopPropagation()">保存</button>
-              <button (click)="cancelEdit(); $event.stopPropagation()">取消</button>
+              <button (click)="deleteMachine(machine.id); $event.stopPropagation()">删除</button>
             </div>
-          </div>
         </ng-container>
+        <!-- 已移除首页重命名入口：统一在图灵机详情页顶部提供重命名功能 -->
       </div>
     </div>
   </div>

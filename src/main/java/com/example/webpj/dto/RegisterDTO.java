@@ -19,4 +19,7 @@ public class RegisterDTO {
     @Email(message = "邮箱格式不正确")
     @NotBlank(message = "邮箱不能为空")
     private String email;
+
+    // 可选的角色字段，允许前端在注册时选择 STUDENT 或 TEACHER
+    private String role;
 }

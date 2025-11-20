@@ -76,7 +76,7 @@ export class TuringMachineManagerComponent implements OnInit {
 
   createMachine(): void {
     if (!this.newMachine.name) {
-      this.toast.show('请输入图灵机名称', 'warn', 4000);
+x      this.toast.show('请输入图灵机名称', 'warn', 4000);
       return;
     }
 
@@ -112,47 +112,4 @@ export class TuringMachineManagerComponent implements OnInit {
       }
     });
   }
-
-  // 重命名相关状态
-  editingMachineId: number | null = null;
-  editingMachineName: string = '';
-  editingMachineDescription: string = '';
-
-  // 开始编辑图灵机
-  startEditMachine(machine: TuringMachineInfo, event: Event): void {
-    event.stopPropagation(); // 阻止事件冒泡
-    this.editingMachineId = machine.id;
-    this.editingMachineName = machine.name;
-    this.editingMachineDescription = machine.description || '';
-  }
-
-  // 取消编辑
-  cancelEdit(): void {
-    this.editingMachineId = null;
-    this.editingMachineName = '';
-    this.editingMachineDescription = '';
-  }
-
-  // 保存重命名
-  saveMachineRename(machineId: number, event: Event): void {
-    event.stopPropagation(); // 阻止事件冒泡
-    
-    if (!this.editingMachineName.trim()) {
-      this.toast.show('图灵机名称不能为空！', 'warn', 4000);
-      return;
-    }
-
-    this.turingService.renameMachine(machineId, this.editingMachineName, this.editingMachineDescription).subscribe({
-      next: (response) => {
-        console.log('重命名成功:', response);
-        this.toast.show('重命名成功', 'success', 3000);
-        this.loadMachines(); // 重新加载列表
-        this.cancelEdit(); // 退出编辑模式
-      },
-      error: (error) => {
-        console.error('重命名失败:', error);
-        this.toast.show('重命名失败: ' + (error?.error?.message || '未知错误'), 'error', 6000);
-      }
-    });
-  }
-}
+} 

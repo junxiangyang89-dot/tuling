@@ -47,4 +47,23 @@
         </set>
         WHERE username = #{username}
     </update>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM sys_user
+        WHERE id = #{id}
+    </select>
+
+    <update id="updateRole" parameterType="map">
+        UPDATE sys_user
+        SET role = #{role}
+        WHERE id = #{id}
+    </update>
 </mapper>

@@ -61,4 +61,27 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException("重置密码失败或用户不存在");
         }
     }
+
+    @Override
+    public java.util.List<User> listUsers() {
+        return userMapper.selectAll();
+    }
+
+    @Override
+    public User getUserById(Long id) {
+        return userMapper.selectById(id);
+    }
+
+    @Override
+    @Transactional
+    public void updateUserRole(Long id, String role) {
+        User user = userMapper.selectById(id);
+        if (user == null) {
+            throw new RuntimeException("用户不存在");
+        }
+        int cnt = userMapper.updateRole(id, role);
+        if (cnt != 1) {
+            throw new RuntimeException("更新用户角色失败");
+        }
+    }
 }

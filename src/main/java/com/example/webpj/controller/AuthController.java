@@ -70,6 +70,10 @@ public class AuthController {
             user.setUsername(registerDTO.getUsername());
             user.setPassword(registerDTO.getPassword());
             user.setEmail(registerDTO.getEmail());
+            // 如果前端传入角色，则设置；否则在 service 层默认设置为 STUDENT
+            if (registerDTO.getRole() != null && !registerDTO.getRole().trim().isEmpty()) {
+                user.setRole(registerDTO.getRole());
+            }
 
             userService.register(user);
             return Result.success("注册成功");

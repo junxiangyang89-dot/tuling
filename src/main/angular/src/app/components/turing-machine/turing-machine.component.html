@@ -22,7 +22,16 @@
     </div>
 
     <div class="center">
-      <h2 *ngIf="machine?.name">{{ machine?.name }}</h2>
+      <div *ngIf="!isEditingName && machine">
+        <h2 *ngIf="machine?.name">{{ machine?.name }}</h2>
+        <button class="rename-inline" title="重命名" (click)="startEditName()">重命名</button>
+      </div>
+      <div *ngIf="isEditingName && machine" class="rename-form-inline">
+        <input type="text" [(ngModel)]="editingName" placeholder="输入新名称" class="inline-name-input" />
+        <input type="text" [(ngModel)]="editingDescription" placeholder="输入描述（可选）" class="inline-desc-input" />
+        <button class="save-inline" (click)="saveNameEdit()">保存</button>
+        <button class="cancel-inline" (click)="cancelEditName()">取消</button>
+      </div>
     </div>
 
     <div class="right-side">

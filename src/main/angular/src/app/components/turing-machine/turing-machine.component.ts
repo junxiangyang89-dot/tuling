@@ -104,6 +104,10 @@ export class TuringMachineComponent implements OnInit {
     }
   };
   currentMode = "free-mode"
+  // 重命名 UI 状态
+  isEditingName: boolean = false;
+  editingName: string = '';
+  editingDescription: string = '';
   // 状态编辑器相关
   showStateEditor = false;
   @ViewChild(StateEditorComponent) stateEditor!: StateEditorComponent;
@@ -1045,6 +1049,56 @@ export class TuringMachineComponent implements OnInit {
   to_login(): void {
     // 不清除登录状态，直接导航到登录页面
     this.router.navigate(['/login']);
+  }
+
+  // 启动重命名编辑（在图灵机详情页顶部）
+  startEditName(): void {
+    if (!this.machine) return;
+    this.isEditingName = true;
+    this.editingName = this.machine?.name || '';
+    this.editingDescription = this.machine?.description || '';
+  }
+
+  // 取消重命名编辑
+  cancelEditName(): void {
+    this.isEditingName = false;
+    this.editingName = '';
+    this.editingDescription = '';
+  }
+
+  // 保存重命名并调用后端接口
+  saveNameEdit(): void {
+    if (!this.currentMachineId) {
+      alert('未选择图灵机');
+      return;
+    }
+    const newName = (this.editingName || '').trim();
+    if (!newName) {
+      alert('图灵机名称不能为空');
+      return;
+    }
+
+    // 调用服务按当前模式保存
+    this.turingService.renameMachineInMode(this.currentMode, this.currentMachineId, newName, this.editingDescription).subscribe({
+      next: (res: any) => {
+        // 更新本地显示
+        if (this.machine) {
+          this.machine.name = newName;
+          this.machine.description = this.editingDescription;
+        }
+        this.isEditingName = false;
+        this.editingName = '';
+        this.editingDescription = '';
+        // 重新加载以确保后端持久化生效
+        setTimeout(() => {
+          if (this.currentMachineId) this.loadMachineData(this.currentMachineId);
+        }, 200);
+      },
+      error: (err: any) => {
+        console.error('重命名失败', err);
+        alert('重命名失败，请稍后重试');
+      }
+    });
   }
 
   // 退出登录

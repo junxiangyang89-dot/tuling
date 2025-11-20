@@ -7,9 +7,9 @@ import com.example.webpj.service.TuringMachineService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class TuringMachineServiceImpl implements TuringMachineService {
@@ -73,23 +73,36 @@ public class TuringMachineServiceImpl implements TuringMachineService {
         if (turingMachineDTO.getConfiguration() != null) {
             existingMachine.setConfiguration(turingMachineDTO.getConfiguration());
         }
+
+        // 如果重命名或更新描述，确保 configuration JSON 中同步更新 name/description
+        try {
+            boolean configUpdated = false;
+            java.util.Map<String, Object> configMap = null;
+            if (existingMachine.getConfiguration() != null && !existingMachine.getConfiguration().isEmpty()) {
+                configMap = objectMapper.readValue(existingMachine.getConfiguration(), java.util.Map.class);
+            } else {
+                configMap = new java.util.HashMap<>();
+            }
+
+            if (turingMachineDTO.getName() != null) {
+                configMap.put("name", turingMachineDTO.getName());
+                configUpdated = true;
+            }
+            if (turingMachineDTO.getDescription() != null) {
+                configMap.put("description", turingMachineDTO.getDescription());
+                configUpdated = true;
+            }
+
+            if (configUpdated) {
+                existingMachine.setConfiguration(objectMapper.writeValueAsString(configMap));
+            }
+        } catch (Exception e) {
+            // 如果配置解析失败，记录但不中断更新流程
+            System.err.println("更新 configuration 时出错: " + e.getMessage());
+        }
         
         if (turingMachineDTO.getIsCompleted() != null) {
             existingMachine.setIsCompleted(turingMachineDTO.getIsCompleted());
-        }
-        
-        // 如果更新了名称，同时更新configuration中的name字段
-        if (turingMachineDTO.getName() != null) {
-            try {
-                String config = existingMachine.getConfiguration();
-                if (config != null && !config.isEmpty()) {
-                    Map<String, Object> configMap = objectMapper.readValue(config, Map.class);
-                    configMap.put("name", turingMachineDTO.getName());
-                    existingMachine.setConfiguration(objectMapper.writeValueAsString(configMap));
-                }
-            } catch (Exception e) {
-                System.err.println("更新configuration中的名称失败: " + e.getMessage());
-            }
         }
         
         // 更新时间
